@@ -1226,6 +1226,22 @@
             </div>
           </div>
         </div>
+        <div>
+          <label for="checkoutObservaciones" class="text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep"
+            >Observaciones o detalles especiales
+            <span class="text-[0.65rem] font-medium normal-case tracking-normal text-saboramaia-ink/50">(opcional)</span></label
+          >
+          <textarea
+            id="checkoutObservaciones"
+            name="observaciones"
+            rows="3"
+            maxlength="1200"
+            class="checkout-field mt-1 max-h-28 min-h-[4.5rem] w-full resize-y rounded-xl px-3 py-2.5 font-body text-sm font-medium text-saboramaia-ink placeholder-saboramaia-muted/45"
+            placeholder="Ej: ¿Algún color de decoración especial? ¿Algún sabor de relleno? ¿Alguna aclaración sobre alergias?"
+            autocomplete="off"
+            aria-required="false"
+          ></textarea>
+        </div>
         <div class="space-y-2 rounded-2xl border border-saboramaia-rose/25 bg-gradient-to-b from-white/80 to-saboramaia-cream/60 p-4 shadow-inner shadow-black/30">
           <p class="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-saboramaia-rosedeep/80">Resumen de costos</p>
           <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-saboramaia-ink/85">
@@ -2814,6 +2830,8 @@
     const pago = form.querySelector('input[name="pago"]:checked')?.value || "";
     const cupon = (form.cupon && form.cupon.value) ? form.cupon.value.trim() : "";
     const direccion = form.direccion && form.direccion.value ? form.direccion.value.trim() : "";
+    const observaciones =
+      form.observaciones && form.observaciones.value ? form.observaciones.value.trim() : "";
     const agendaRequired = checkoutAgendaRequired();
     const byW = cartHasByWeightProducts();
 
@@ -2903,6 +2921,7 @@
       direccion: entrega === "domicilio" ? direccion : "",
       horaReserva,
       reservaPorPeso,
+      observaciones,
     };
   }
 
@@ -2922,6 +2941,11 @@
       lines.push("📅 Reserva para el día: " + formatDateEsAR(checkout.entregaFecha) + " a las " + checkout.entregaHorario);
     }
     lines.push("");
+    if (checkout.observaciones) {
+      lines.push("📝 NOTAS:");
+      lines.push(checkout.observaciones);
+      lines.push("");
+    }
     if (forceReservaWhatsapp || !isKitchenOpen()) {
       lines.push("*" + RESERVA_WHATSAPP_TAG + "*");
       lines.push("");
@@ -2960,6 +2984,8 @@
     }
     lines.push("*Método de pago elegido:* " + formatPagoLabelWhatsapp(checkout.pago));
     lines.push("*Cupón:* " + (checkout.cupon || "(ninguno)"));
+    lines.push("");
+    lines.push("🚀 Enviado desde Saboramaia");
     return lines.join("\n");
   }
 
