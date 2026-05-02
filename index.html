@@ -2541,7 +2541,7 @@
       .join("");
     updateReservaBlock();
     const bywHint = document.getElementById("cart-byweight-hint");
-    if (bywHint) bywHint.classList.toggle("hidden", !cartHasByWeightProducts());
+    if (bywHint) bywHint.classList.toggle("hidden", !hasWeightProducts());
     updateProceedCheckoutButtonLabel();
     if (isCheckoutModalOpen()) {
       updateCheckoutEntregaUi();
@@ -2671,9 +2671,21 @@
     );
   }
 
+  /**
+   * Horas mínimas de anticipación para la fecha de entrega según el carrito:
+   * — Con productos por kg: al menos 48 h (y el valor del panel admin si es mayor).
+   * — Solo reserva por falta de stock (precio fijo): 24 h (más flexible).
+   */
+  function getMinReservationHoursForCart() {
+    if (hasWeightProducts()) return Math.max(48, minReservationHours);
+    if (cartRequiresReservationSchedule()) return 24;
+    return minReservationHours;
+  }
+
   function getMinDateIsoForReservation() {
+    const h = getMinReservationHoursForCart();
     const d = new Date();
-    d.setTime(d.getTime() + minReservationHours * 60 * 60 * 1000);
+    d.setTime(d.getTime() + h * 60 * 60 * 1000);
     return dateToIsoLocal(d);
   }
 
@@ -2687,11 +2699,11 @@
 
   /** Fecha y franja obligatorias: sin stock (encargo) o venta por peso (preparación / pesaje). */
   function checkoutAgendaRequired() {
-    return cartRequiresReservationSchedule() || cartHasByWeightProducts();
+    return cartRequiresReservationSchedule() || hasWeightProducts();
   }
 
-  /** True si el carrito incluye al menos un producto vendido por peso (precio referencial hasta pesaje). */
-  function cartHasByWeightProducts() {
+  /** True si hay al menos un ítem con precio por kg (isByWeight). Leyendas de “estimado / pesaje” solo con esto. */
+  function hasWeightProducts() {
     for (const line of cart) {
       const p = getProductById(line.id);
       if (p && p.isByWeight === true) return true;
@@ -2702,7 +2714,7 @@
   function updateProceedCheckoutButtonLabel() {
     const proceed = document.getElementById("btn-proceed-checkout");
     if (!proceed) return;
-    if (cart.length && cartHasByWeightProducts()) {
+    if (cart.length && (hasWeightProducts() || cartRequiresReservationSchedule())) {
       proceed.textContent = proceed.getAttribute("data-label-byweight") || "CONFIRMAR RESERVA";
       return;
     }
@@ -2717,7 +2729,8 @@
    * Se invoca al renderizar carrito, abrir checkout y cuando cambia el catálogo vía storage.
    */
   function updateCheckoutByWeightUi() {
-    const bw = cart.length > 0 && cartHasByWeightProducts();
+    const bw = cart.length > 0 && hasWeightProducts();
+    const stockRes = cart.length > 0 && cartRequiresReservationSchedule();
     const notice = document.getElementById("checkout-byweight-notice");
     const pesaje = document.getElementById("checkout-pago-pesaje");
     const directo = document.getElementById("checkout-pago-directo");
@@ -2731,7 +2744,9 @@
     if (directo) directo.classList.toggle("hidden", bw);
     if (estimado) estimado.classList.toggle("hidden", !bw);
     if (totalLbl) {
-      totalLbl.textContent = bw ? "Total estimado (hasta pesaje)" : "Monto Total a Pagar";
+      if (bw) totalLbl.textContent = "TOTAL ESTIMADO (HASTA PESAJE)";
+      else if (stockRes) totalLbl.textContent = "TOTAL DE TU RESERVA";
+      else totalLbl.textContent = "Monto Total a Pagar";
     }
 
     if (bw) {
@@ -2772,10 +2787,11 @@
     const fechaStar = document.getElementById("entrega-fecha-required-star");
     if (!fecha || !horario) return;
 
-    const byW = cartHasByWeightProducts();
+    const byW = hasWeightProducts();
     const needs = checkoutAgendaRequired();
-    if (hoursSpan) hoursSpan.textContent = String(minReservationHours);
-    if (hoursBw) hoursBw.textContent = String(minReservationHours);
+    const minHAgenda = getMinReservationHoursForCart();
+    if (hoursSpan) hoursSpan.textContent = String(minHAgenda);
+    if (hoursBw) hoursBw.textContent = String(minHAgenda);
 
     if (wrap) wrap.classList.toggle("checkout-agenda--reserva", needs);
     if (marker) marker.classList.toggle("hidden", !needs);
@@ -2833,7 +2849,7 @@
     const observaciones =
       form.observaciones && form.observaciones.value ? form.observaciones.value.trim() : "";
     const agendaRequired = checkoutAgendaRequired();
-    const byW = cartHasByWeightProducts();
+    const byW = hasWeightProducts();
 
     if (!clientName) {
       alert("Necesitamos tu nombre completo para identificar el pedido con cuidado.");
@@ -2845,15 +2861,17 @@
         alert(
           byW
             ? "Tu pedido incluye productos por peso: completá fecha y franja de entrega (mín. " +
-                minReservationHours +
+                getMinReservationHoursForCart() +
                 " hs de anticipación)."
-            : "Tu pedido incluye productos por encargo: completá fecha y franja de entrega.",
+            : "Tu pedido incluye productos por encargo: completá fecha y franja de entrega (mín. " +
+                getMinReservationHoursForCart() +
+                " hs de anticipación).",
         );
         return null;
       }
       const minIso = getMinDateIsoForReservation();
       if (entregaFecha < minIso) {
-        alert("Elegí una fecha con al menos " + minReservationHours + " horas de anticipación.");
+        alert("Elegí una fecha con al menos " + getMinReservationHoursForCart() + " horas de anticipación.");
         return null;
       }
     } else {
@@ -2893,7 +2911,7 @@
       alert("Seleccioná cómo preferís abonar para cerrar el pedido.");
       return null;
     }
-    const reservaPorPeso = cartHasByWeightProducts();
+    const reservaPorPeso = hasWeightProducts();
     if (reservaPorPeso && pago !== "pendiente_pesaje") {
       alert("Este pedido incluye productos por peso: el pago se coordina después del pesaje por WhatsApp.");
       updateCheckoutByWeightUi();
