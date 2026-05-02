@@ -370,6 +370,53 @@
     .hours-status-chip--footer-surface .hours-status-chip__label {
       color: #3d3838;
     }
+    /* Firma WebElite — franja inferior oscura */
+    .footer-producer-signature {
+      background: linear-gradient(180deg, #252320 0%, #171514 100%);
+      padding: 1rem 1rem calc(20px + env(safe-area-inset-bottom, 0px));
+      text-align: center;
+    }
+    .footer-producer-signature__rule {
+      border: none;
+      height: 1px;
+      width: min(11rem, 42vw);
+      margin: 0 auto 1rem;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(201, 168, 96, 0.35),
+        rgba(232, 224, 210, 0.22),
+        rgba(201, 168, 96, 0.35),
+        transparent
+      );
+    }
+    .footer-producer-signature__text {
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(214, 211, 205, 0.62);
+      line-height: 1.65;
+      max-width: 28rem;
+      margin: 0 auto;
+    }
+    .footer-producer-signature__link {
+      color: rgba(212, 188, 130, 0.88);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 1px;
+      transition: color 0.22s ease, border-color 0.22s ease;
+    }
+    .footer-producer-signature__link:hover {
+      color: rgba(237, 222, 185, 0.98);
+      border-bottom-color: rgba(212, 188, 130, 0.55);
+    }
+    .footer-producer-signature__link:focus-visible {
+      outline: 2px solid rgba(212, 188, 130, 0.45);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
     .nav-header-links a {
       color: #ffffff;
       text-decoration: none;
@@ -664,7 +711,7 @@
                 >Pedir ahora</a
               >
               <a
-                href="https://wa.me/5493446536509"
+                href="https://wa.me/5493446211474"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="btn-hero-outline-secondary inline-flex flex-1 items-center justify-center gap-2 rounded-full px-8 py-3.5 text-sm font-bold uppercase tracking-wide sm:flex-initial"
@@ -766,24 +813,39 @@
       </section>
     </main>
 
-    <footer class="border-t border-saboramaia-rose/25 bg-white/90 py-10 text-center text-xs text-saboramaia-ink/60">
-      <p class="text-sm font-semibold tracking-wide text-saboramaia-rosedeep">Saboramaia . Elaboraciones Dulces y Saladas</p>
-      <div
-        id="hours-status-footer"
-        class="mt-3 flex justify-center px-2"
-        role="status"
-        aria-live="polite"
-      >
-        <span
-          id="hours-status-footer-text"
-          class="hours-status-chip hours-status-chip--footer hours-status-chip--footer-surface hours-status-chip--open inline-flex max-w-full justify-center text-center"
-          ><span data-hours-open-dot class="hours-status-dot-open-wrap" aria-hidden="true"
-            ><span class="hours-dot-soft-ring"></span><span class="hours-dot-solid"></span></span
-          ><span data-hours-closed-dot class="hours-status-dot-closed-solid hidden" aria-hidden="true"></span
-          ><span class="hours-status-chip__label">…</span></span
+    <footer class="border-t border-saboramaia-rose/25">
+      <div class="bg-white/90 py-10 text-center text-xs text-saboramaia-ink/60">
+        <p class="text-sm font-semibold tracking-wide text-saboramaia-rosedeep">Saboramaia . Elaboraciones Dulces y Saladas</p>
+        <div
+          id="hours-status-footer"
+          class="mt-3 flex justify-center px-2"
+          role="status"
+          aria-live="polite"
         >
+          <span
+            id="hours-status-footer-text"
+            class="hours-status-chip hours-status-chip--footer hours-status-chip--footer-surface hours-status-chip--open inline-flex max-w-full justify-center text-center"
+            ><span data-hours-open-dot class="hours-status-dot-open-wrap" aria-hidden="true"
+              ><span class="hours-dot-soft-ring"></span><span class="hours-dot-solid"></span></span
+            ><span data-hours-closed-dot class="hours-status-dot-closed-solid hidden" aria-hidden="true"></span
+            ><span class="hours-status-chip__label">…</span></span
+          >
+        </div>
+        <p class="mt-2">© 2026 · Hecho con manos y buen criterio.</p>
       </div>
-      <p class="mt-2">© 2026 · Hecho con manos y buen criterio.</p>
+      <div class="footer-producer-signature" aria-label="Créditos del sitio">
+        <hr class="footer-producer-signature__rule" aria-hidden="true" />
+        <p class="footer-producer-signature__text">
+          Sitio producido por
+          <a
+            href="https://example.com"
+            class="footer-producer-signature__link"
+            target="_blank"
+            rel="noopener noreferrer"
+            >WebElite Solutions</a
+          >.
+        </p>
+      </div>
     </footer>
   </div>
 
