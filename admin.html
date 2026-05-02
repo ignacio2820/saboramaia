@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#F9F5F2" />
+  <title>Saboramaia · Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            saboramaia: {
+              ink: "#3d3838",
+              cream: "#F9F5F2",
+              rose: "#DA0078",
+              rosedeep: "#A80056",
+              roselight: "#FFE8F2",
+            },
+          },
+          fontFamily: {
+            sans: ['"Fredoka"', "ui-sans-serif", "system-ui", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Fredoka", system-ui, sans-serif;
+      background: #f9f5f2;
+      min-height: 100dvh;
+    }
+    .touch-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    /* Toggle iOS-style */
+    .toggle-ios {
+      appearance: none;
+      width: 3.25rem;
+      height: 1.875rem;
+      border-radius: 9999px;
+      background: #d4d4d8;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.25s ease;
+      flex-shrink: 0;
+    }
+    .toggle-ios::after {
+      content: "";
+      position: absolute;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 9999px;
+      background: #fff;
+      top: 0.1875rem;
+      left: 0.1875rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      transition: transform 0.25s ease;
+    }
+    .toggle-ios:checked {
+      background: #da0078;
+    }
+    .toggle-ios:checked::after {
+      transform: translateX(1.25rem);
+    }
+    .toggle-ios:focus-visible {
+      outline: 2px solid #da0078;
+      outline-offset: 3px;
+    }
+  </style>
+</head>
+<body class="bg-saboramaia-cream text-saboramaia-ink antialiased">
+  <!-- Modal acceso -->
+  <div id="gate-modal" class="fixed inset-0 z-[100] flex flex-col bg-saboramaia-cream p-5">
+    <div class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center">
+      <p class="text-center text-sm font-semibold uppercase tracking-[0.25em] text-saboramaia-rosedeep">Saboramaia</p>
+      <h1 class="mt-3 text-center text-2xl font-bold text-saboramaia-ink">Panel de gestión</h1>
+      <p class="mt-2 text-center text-sm font-medium text-saboramaia-ink/75">Ingresá la clave de acceso</p>
+      <input
+        type="password"
+        id="gate-password"
+        autocomplete="current-password"
+        enterkeyhint="done"
+        class="touch-target mt-6 w-full rounded-2xl border-2 border-saboramaia-rose/35 bg-white px-4 text-lg font-medium text-saboramaia-ink shadow-inner outline-none focus:border-saboramaia-rose focus:ring-2 focus:ring-saboramaia-rose/25"
+        placeholder="Clave"
+      />
+      <button
+        type="button"
+        id="gate-submit"
+        class="touch-target mt-4 w-full rounded-2xl bg-gradient-to-b from-[#ff4da6] to-[#DA0078] py-3.5 text-base font-bold uppercase tracking-wide text-white shadow-lg shadow-saboramaia-rose/30 active:scale-[0.98]"
+      >
+        Entrar
+      </button>
+      <p id="gate-error" class="mt-3 hidden text-center text-sm font-semibold text-red-600"></p>
+    </div>
+  </div>
+
+  <!-- Panel principal -->
+  <div id="admin-panel" class="hidden min-h-dvh pb-28 pt-4">
+    <header class="border-b border-saboramaia-rose/20 bg-white/80 px-4 pb-4 backdrop-blur-sm">
+      <p class="text-center text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">Saboramaia</p>
+      <h1 class="text-center text-xl font-bold text-saboramaia-ink">Stock y promociones</h1>
+    </header>
+
+    <main class="mx-auto max-w-lg space-y-8 px-4 py-6">
+      <section>
+        <h2 class="text-lg font-bold text-saboramaia-ink">Productos y stock</h2>
+        <p class="mt-1 text-sm font-medium text-saboramaia-ink/70">Activá o desactivá la disponibilidad inmediata.</p>
+        <ul id="product-stock-list" class="mt-4 space-y-3"></ul>
+      </section>
+
+      <section class="rounded-2xl border border-saboramaia-rose/25 bg-white/90 p-4 shadow-md shadow-saboramaia-rose/10">
+        <h2 class="text-lg font-bold text-saboramaia-ink">Gestión de Promociones</h2>
+        <p class="mt-1 text-sm font-medium text-saboramaia-ink/75">
+          Activá o desactivá cada cupón y ajustá el % cuando quieras. Solo los activos funcionan en la web.
+        </p>
+        <ul id="promo-coupons-list" class="mt-4 space-y-4"></ul>
+      </section>
+
+      <section class="rounded-2xl border border-saboramaia-rose/25 bg-white/90 p-4 shadow-md shadow-saboramaia-rose/10">
+        <h2 class="text-lg font-bold text-saboramaia-ink">Tiempo mínimo de reserva</h2>
+        <p class="mt-1 text-sm text-saboramaia-ink/75">Anticipación para pedidos tipo torta personalizada.</p>
+        <select
+          id="min-reservation-hours"
+          class="touch-target mt-4 w-full rounded-xl border border-saboramaia-rose/35 bg-white px-4 py-3 text-base font-semibold outline-none focus:border-saboramaia-rose"
+        >
+          <option value="24">24 horas</option>
+          <option value="48" selected>48 horas</option>
+          <option value="72">72 horas</option>
+        </select>
+      </section>
+
+      <button
+        type="button"
+        id="btn-save"
+        class="touch-target w-full rounded-2xl bg-gradient-to-b from-[#ff4da6] to-[#DA0078] py-4 text-base font-bold uppercase tracking-wide text-white shadow-lg shadow-saboramaia-rose/35 active:scale-[0.99]"
+      >
+        Guardar cambios
+      </button>
+
+      <button
+        type="button"
+        id="btn-sync-wa"
+        class="touch-target flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-saboramaia-rose bg-white py-4 text-base font-bold text-saboramaia-rosedeep shadow-md active:scale-[0.99]"
+      >
+        <span aria-hidden="true">💬</span>
+        Sincronizar con Ignacio
+      </button>
+    </main>
+  </div>
+
+  <div id="toast-save" class="pointer-events-none fixed bottom-24 left-1/2 z-[110] hidden -translate-x-1/2 rounded-full bg-saboramaia-ink px-5 py-3 text-sm font-semibold text-white shadow-xl" role="status"></div>
+
+  <script>
+(function () {
+  "use strict";
+
+  const ACCESS_CODE = "Sabor2026";
+  const STORAGE_KEY = "saboramaia_config";
+  /** Mismo número que index.html (WhatsApp pedidos) */
+  const WA_SYNC_NUMBER = "5493446536509";
+
+  const PRODUCT_CATALOG = [
+    { id: "postre-rogel", name: "Postre Rogel", image: "assets/rogel.jpg" },
+    { id: "brownie-saboramaia", name: "Brownie Saboramaia", image: "assets/browni.jpg" },
+    { id: "torta-manzana-receta-abuela", name: "Torta de Manzana", image: "https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?auto=format&fit=crop&w=200&q=60" },
+    { id: "torta-marquise-saboramaia", name: "Marquise Saboramaia", image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200&q=60&auto=format&fit=crop" },
+    { id: "torta-tarta-toffe-saboramaia", name: "Tarta Toffe Saboramaia", image: "assets/tarta.toffe.jpg" },
+    { id: "torta-lemon-pie-especial", name: "Lemon Pie", image: "assets/lemom.pie.jpg" },
+    { id: "torta-red-velvet", name: "Red Velvet", image: "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=200&q=60&auto=format&fit=crop" },
+    { id: "cat-chips-jamon-queso", name: "Chips de Jamón y Queso", image: "assets/chips.jamonyqueso.jpg" },
+    { id: "cat-pancitos-saborizados", name: "Pancitos Saborizados", image: "assets/pancitos.saborizados.jpg" },
+    { id: "cat-pan-casero-campo", name: "Pan Casero de Campo", image: "https://images.unsplash.com/photo-1585478259715-876a6a81fc08?auto=format&fit=crop&w=200&q=60" },
+    { id: "cat-box-salada-premium", name: "Box Salada Premium", image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=200&q=60&auto=format&fit=crop" },
+  ];
+
+  function loadConfig() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function defaultStock() {
+    const o = {};
+    PRODUCT_CATALOG.forEach((p) => {
+      o[p.id] = true;
+    });
+    return o;
+  }
+
+  function mergeStock(cfg) {
+    const base = defaultStock();
+    if (cfg && cfg.stock && typeof cfg.stock === "object") {
+      Object.keys(base).forEach((id) => {
+        if (typeof cfg.stock[id] === "boolean") base[id] = cfg.stock[id];
+      });
+    }
+    return base;
+  }
+
+  const PROMO_DEFS = [
+    { code: "BIENVENIDA5", title: "BIENVENIDA5", hint: "5% OFF (por defecto)", defaultPct: 5, defaultActive: true },
+    { code: "DULCE10", title: "DULCE10", hint: "10% OFF (por defecto)", defaultPct: 10, defaultActive: true },
+    { code: "SABOR15", title: "SABOR15", hint: "15% OFF (por defecto)", defaultPct: 15, defaultActive: true },
+    {
+      code: "PROMO_EVENTO",
+      title: "PROMO_EVENTO",
+      hint: "Descuento personalizado — definí el % abajo",
+      defaultPct: 20,
+      defaultActive: false,
+    },
+  ];
+
+  function defaultCouponsMap() {
+    const o = {};
+    PROMO_DEFS.forEach((d) => {
+      o[d.code] = { active: d.defaultActive, percent: d.defaultPct };
+    });
+    return o;
+  }
+
+  function mergeCoupons(cfg) {
+    const base = defaultCouponsMap();
+    if (cfg && cfg.coupons && typeof cfg.coupons === "object") {
+      PROMO_DEFS.forEach((d) => {
+        const c = cfg.coupons[d.code];
+        if (c && typeof c === "object") {
+          base[d.code] = {
+            active: !!c.active,
+            percent: Math.min(100, Math.max(0, Number(c.percent) || 0)),
+          };
+        }
+      });
+    }
+    return base;
+  }
+
+  function slugPromo(code) {
+    return code.replace(/[^a-zA-Z0-9]/g, "_");
+  }
+
+  function renderPromoCoupons(couponsMap) {
+    const ul = document.getElementById("promo-coupons-list");
+    ul.innerHTML = PROMO_DEFS.map((d) => {
+      const cur = couponsMap[d.code] || { active: d.defaultActive, percent: d.defaultPct };
+      const sid = slugPromo(d.code);
+      const pctVal = cur.percent != null ? String(cur.percent) : String(d.defaultPct);
+      return `
+        <li class="rounded-2xl border border-saboramaia-rose/20 bg-white p-4 shadow-sm">
+          <div class="flex items-start gap-3">
+            <div class="min-w-0 flex-1">
+              <p class="text-base font-bold text-saboramaia-ink">${escapeHtml(d.title)}</p>
+              <p class="mt-0.5 text-sm font-medium text-saboramaia-ink/65">${escapeHtml(d.hint)}</p>
+              <label class="mt-3 block text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">% descuento</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="1"
+                id="promo-pct-${sid}"
+                data-promo-code="${escapeHtml(d.code)}"
+                class="touch-target mt-1 w-full max-w-[9rem] rounded-xl border border-saboramaia-rose/35 bg-white px-4 py-3 text-lg font-bold text-saboramaia-ink outline-none focus:border-saboramaia-rose"
+                value="${escapeHtml(pctVal)}"
+              />
+            </div>
+            <div class="flex flex-col items-end gap-2 pt-1">
+              <span class="text-[0.65rem] font-semibold uppercase tracking-wide text-saboramaia-ink/50">Activo</span>
+              <input
+                type="checkbox"
+                role="switch"
+                class="toggle-ios"
+                id="promo-on-${sid}"
+                data-promo-code="${escapeHtml(d.code)}"
+                ${cur.active ? "checked" : ""}
+                aria-label="Cupón ${escapeHtml(d.title)} activo"
+              />
+            </div>
+          </div>
+        </li>`;
+    }).join("");
+  }
+
+  function renderProductList(stockMap) {
+    const ul = document.getElementById("product-stock-list");
+    ul.innerHTML = PRODUCT_CATALOG.map((p) => {
+      const on = stockMap[p.id] !== false;
+      return `
+        <li class="flex items-center gap-3 rounded-2xl border border-saboramaia-rose/20 bg-white/95 p-3 shadow-sm">
+          <img src="${p.image}" alt="" class="h-14 w-14 shrink-0 rounded-xl object-cover ring-1 ring-saboramaia-rose/15" width="56" height="56" loading="lazy" />
+          <div class="min-w-0 flex-1 py-1">
+            <p class="font-bold leading-tight text-saboramaia-ink">${escapeHtml(p.name)}</p>
+            <p class="mt-0.5 text-[0.7rem] font-medium text-saboramaia-ink/55">${escapeHtml(p.id)}</p>
+          </div>
+          <input type="checkbox" role="switch" class="toggle-ios" id="stock-${p.id}" ${on ? "checked" : ""} aria-label="Stock ${escapeHtml(p.name)}" />
+        </li>`;
+    }).join("");
+  }
+
+  function escapeHtml(s) {
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function fillFormFromConfig() {
+    const cfg = loadConfig();
+    const stock = mergeStock(cfg || {});
+    renderProductList(stock);
+
+    const couponsMap = mergeCoupons(cfg || {});
+    renderPromoCoupons(couponsMap);
+
+    const mh = cfg && typeof cfg.minReservationHours === "number" ? cfg.minReservationHours : 48;
+    const sel = document.getElementById("min-reservation-hours");
+    if ([24, 48, 72].includes(mh)) sel.value = String(mh);
+    else {
+      const opt = document.createElement("option");
+      opt.value = String(mh);
+      opt.textContent = mh + " horas";
+      sel.appendChild(opt);
+      sel.value = String(mh);
+    }
+  }
+
+  function collectConfigFromUi() {
+    const stock = {};
+    PRODUCT_CATALOG.forEach((p) => {
+      const el = document.getElementById("stock-" + p.id);
+      stock[p.id] = el ? !!el.checked : true;
+    });
+    const coupons = {};
+    PROMO_DEFS.forEach((d) => {
+      const sid = slugPromo(d.code);
+      const toggle = document.getElementById("promo-on-" + sid);
+      const pctIn = document.getElementById("promo-pct-" + sid);
+      const pct = pctIn ? parseInt(pctIn.value, 10) : d.defaultPct;
+      coupons[d.code] = {
+        active: toggle ? !!toggle.checked : false,
+        percent: Number.isFinite(pct) ? Math.min(100, Math.max(0, pct)) : d.defaultPct,
+      };
+    });
+    return {
+      version: 1,
+      stock,
+      coupons,
+      minReservationHours: parseInt(document.getElementById("min-reservation-hours").value, 10) || 48,
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
+  function saveConfig() {
+    const cfg = collectConfigFromUi();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
+    const toast = document.getElementById("toast-save");
+    toast.textContent = "✓ Cambios guardados";
+    toast.classList.remove("hidden");
+    setTimeout(() => toast.classList.add("hidden"), 2200);
+  }
+
+  function syncWhatsApp() {
+    const cfg = collectConfigFromUi();
+    const json = JSON.stringify(cfg);
+    const header = "📋 Saboramaia — backup configuración\n\n";
+    const body = header + json;
+    const url = "https://wa.me/" + WA_SYNC_NUMBER + "?text=" + encodeURIComponent(body);
+    if (url.length > 7500) {
+      alert("El mensaje es muy largo para WhatsApp. Guardá los cambios y copiá manualmente desde una PC.");
+      return;
+    }
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  function unlockPanel() {
+    document.getElementById("gate-modal").classList.add("hidden");
+    document.getElementById("admin-panel").classList.remove("hidden");
+    fillFormFromConfig();
+  }
+
+  function tryGate() {
+    const input = document.getElementById("gate-password");
+    const err = document.getElementById("gate-error");
+    err.classList.add("hidden");
+    if ((input.value || "").trim() === ACCESS_CODE) {
+      unlockPanel();
+      input.value = "";
+      return;
+    }
+    window.location.href = "index.html";
+  }
+
+  document.getElementById("gate-submit").addEventListener("click", tryGate);
+  document.getElementById("gate-password").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") tryGate();
+  });
+
+  document.getElementById("btn-save").addEventListener("click", saveConfig);
+  document.getElementById("btn-sync-wa").addEventListener("click", syncWhatsApp);
+})();
+  </script>
+</body>
+</html>
