@@ -1186,12 +1186,23 @@
           <p id="checkout-agenda-hint-opcional" class="text-[0.65rem] leading-snug text-saboramaia-ink/70">
             Opcional: Si lo querés para ahora, dejanos los campos vacíos.
           </p>
+          <p id="checkout-agenda-hint-byweight" class="hidden text-[0.65rem] leading-relaxed font-semibold text-rose-700/90">
+            ⚠️ Estos productos requieren preparación. Por favor, seleccioná fecha y hora (Mínimo
+            <span id="checkout-agenda-bw-hours">48</span> hs de anticipación).
+          </p>
           <p id="checkout-agenda-hint-reserva" class="hidden text-[0.65rem] leading-snug text-saboramaia-rosedeep/90">
             Reserva: completá fecha y franja. Anticipación mínima: <span id="checkout-agenda-min-hours">48</span> hs.
           </p>
           <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
             <div class="min-w-0 flex-1">
-              <label for="entregaFecha" class="mb-1 block text-xs font-medium text-saboramaia-ink/85">Fecha de entrega</label>
+              <label for="entregaFecha" class="mb-1 block text-xs font-medium text-saboramaia-ink/85"
+                >Fecha de entrega<span
+                  id="entrega-fecha-required-star"
+                  class="ml-0.5 hidden font-semibold text-red-600"
+                  aria-hidden="true"
+                  >*</span
+                ></label
+              >
               <input
                 type="date"
                 id="entregaFecha"
@@ -2658,6 +2669,11 @@
     return false;
   }
 
+  /** Fecha y franja obligatorias: sin stock (encargo) o venta por peso (preparación / pesaje). */
+  function checkoutAgendaRequired() {
+    return cartRequiresReservationSchedule() || cartHasByWeightProducts();
+  }
+
   /** True si el carrito incluye al menos un producto vendido por peso (precio referencial hasta pesaje). */
   function cartHasByWeightProducts() {
     for (const line of cart) {
@@ -2733,17 +2749,24 @@
     const horario = document.getElementById("entregaHorario");
     const marker = document.getElementById("checkout-agenda-required-marker");
     const hintOp = document.getElementById("checkout-agenda-hint-opcional");
+    const hintBw = document.getElementById("checkout-agenda-hint-byweight");
     const hintRes = document.getElementById("checkout-agenda-hint-reserva");
     const hoursSpan = document.getElementById("checkout-agenda-min-hours");
+    const hoursBw = document.getElementById("checkout-agenda-bw-hours");
+    const fechaStar = document.getElementById("entrega-fecha-required-star");
     if (!fecha || !horario) return;
 
-    const needs = cartRequiresReservationSchedule();
+    const byW = cartHasByWeightProducts();
+    const needs = checkoutAgendaRequired();
     if (hoursSpan) hoursSpan.textContent = String(minReservationHours);
+    if (hoursBw) hoursBw.textContent = String(minReservationHours);
 
     if (wrap) wrap.classList.toggle("checkout-agenda--reserva", needs);
     if (marker) marker.classList.toggle("hidden", !needs);
     if (hintOp) hintOp.classList.toggle("hidden", needs);
-    if (hintRes) hintRes.classList.toggle("hidden", !needs);
+    if (hintBw) hintBw.classList.toggle("hidden", !needs || !byW);
+    if (hintRes) hintRes.classList.toggle("hidden", !needs || byW);
+    if (fechaStar) fechaStar.classList.toggle("hidden", !needs);
 
     const opt0 = horario.options[0];
     if (needs) {
@@ -2791,16 +2814,23 @@
     const pago = form.querySelector('input[name="pago"]:checked')?.value || "";
     const cupon = (form.cupon && form.cupon.value) ? form.cupon.value.trim() : "";
     const direccion = form.direccion && form.direccion.value ? form.direccion.value.trim() : "";
-    const needsReserva = cartRequiresReservationSchedule();
+    const agendaRequired = checkoutAgendaRequired();
+    const byW = cartHasByWeightProducts();
 
     if (!clientName) {
       alert("Necesitamos tu nombre completo para identificar el pedido con cuidado.");
       return null;
     }
 
-    if (needsReserva) {
+    if (agendaRequired) {
       if (!entregaFecha || !entregaHorario) {
-        alert("Tu pedido incluye productos por encargo: completá fecha y franja de entrega.");
+        alert(
+          byW
+            ? "Tu pedido incluye productos por peso: completá fecha y franja de entrega (mín. " +
+                minReservationHours +
+                " hs de anticipación)."
+            : "Tu pedido incluye productos por encargo: completá fecha y franja de entrega.",
+        );
         return null;
       }
       const minIso = getMinDateIsoForReservation();
@@ -2831,7 +2861,7 @@
       }
     }
 
-    const entregaInmediata = !needsReserva && !entregaFecha && !entregaHorario;
+    const entregaInmediata = !agendaRequired && !entregaFecha && !entregaHorario;
 
     if (!entrega) {
       alert("Indicá si preferís envío a domicilio o retiro en local.");
