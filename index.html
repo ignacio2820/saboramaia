@@ -490,49 +490,53 @@
       class="z-40 border-b border-white/20 bg-gradient-to-b from-[#ff4da6] via-[#DA0078] to-[#A80056] shadow-md shadow-black/10"
     >
       <div class="mx-auto max-w-7xl">
-        <!-- Barra tipo app: solo < md -->
+        <!-- Barra tipo app: solo < md — logo a la izquierda, acciones a la derecha -->
         <div
-          class="grid grid-cols-[auto_1fr_auto] items-center gap-2 px-2 py-2.5 md:hidden"
+          class="flex items-center justify-between gap-2 px-4 py-2.5 md:hidden"
           aria-label="Barra principal"
         >
-          <button
-            type="button"
-            id="btn-mobile-menu"
-            class="-ml-0.5 rounded-lg p-2 text-white transition hover:bg-white/15"
-            aria-expanded="false"
-            aria-controls="mobile-nav-panel"
-            aria-label="Secciones y navegación"
+          <a
+            href="#"
+            class="flex min-w-0 flex-1 items-center justify-start pr-2 transition-opacity hover:opacity-95"
+            aria-label="Inicio Saboramaia"
           >
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <a href="#" class="flex min-w-0 justify-center transition-opacity hover:opacity-95">
             <img
-              class="logo-mobile h-auto max-h-[76px] w-auto max-w-[min(200px,48vw)] object-contain transition-[max-height] duration-300"
+              class="logo-mobile h-auto max-h-[72px] w-auto max-w-[min(200px,46vw)] object-contain object-left transition-[max-height] duration-300"
               src="assets/logo-saboramaia.jpg"
               alt="Saboramaia — Pastelería y catering"
               width="200"
               height="80"
             />
           </a>
-          <div class="flex flex-col items-end justify-center gap-1.5 pr-0.5">
+          <div class="flex min-w-0 shrink-0 items-center gap-1 sm:gap-1.5">
             <div
               id="hours-status-header-mobile"
-              class="max-w-[9rem]"
+              class="max-w-[6.5rem] min-[380px]:max-w-[8rem]"
               role="status"
               aria-live="polite"
               title="Horario de atención: Lun–Dom 08:00 a 20:00 hs"
             >
               <span
                 id="hours-status-mobile-text"
-                class="hours-status-chip hours-status-chip--open ml-auto inline-flex max-w-full justify-end text-right"
+                class="hours-status-chip hours-status-chip--open inline-flex max-w-full text-left"
                 ><span data-hours-open-dot class="hours-status-dot-open-wrap" aria-hidden="true"
                   ><span class="hours-dot-soft-ring"></span><span class="hours-dot-solid"></span></span
                 ><span data-hours-closed-dot class="hours-status-dot-closed-solid hidden" aria-hidden="true"></span
                 ><span class="hours-status-chip__label">…</span></span
               >
             </div>
+            <button
+              type="button"
+              id="btn-mobile-menu"
+              class="rounded-lg p-2 text-white transition hover:bg-white/15"
+              aria-expanded="false"
+              aria-controls="mobile-nav-panel"
+              aria-label="Secciones y navegación"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
             <button
               type="button"
               id="btn-header-cart"
