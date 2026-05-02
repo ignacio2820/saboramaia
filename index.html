@@ -2383,7 +2383,7 @@
     const promo = document.getElementById("promo-line");
     if (t.promoActive) {
       promo.classList.remove("hidden");
-      promo.textContent = "Promo activa: 2 o más tortas en el carrito — 20% de descuento en Catering & masas saladas.";
+      promo.textContent = "Promo activa: 2 o más tortas en el carrito — 10% de descuento en Catering & masas saladas.";
     } else {
       promo.classList.add("hidden");
     }
@@ -3096,12 +3096,12 @@
   const WELCOME_OPEN =
     "¡Hola! Soy la asistente de la Maestra Pastelera de Saboramaia. ¿Buscás una torta para celebrar o catering salado para reunir a tu gente?";
   const WELCOME_OPEN_ALT =
-    "Podés combinar lo dulce con nuestras masas saladas y finger food; te ayudo a armar algo equilibrado y elegante.";
+    "Podés combinar lo dulce con nuestras masas saladas; te ayudo a armar algo equilibrado y elegante.";
   const WELCOME_RETURNING =
     "¡Qué lindo verte otra vez! ¿Repetimos tu favorito o exploramos una nueva combinación de rellenos?";
   const WELCOME_CLOSED =
     "¡Buenas! 🌙 Ahora estamos fuera del horario de atención, pero podés dejar tu pedido reservado y lo coordinamos al abrir. Atención Lun–Dom 08:00 a 20:00 hs. Gracias por confiar en el trabajo artesanal de Saboramaia. ✨";
-  const TIP = "Detalle Saboramaia: con 2 o más tortas en el carrito, el catering y masas saladas llevan 20% de descuento.";
+  const TIP = "Detalle Saboramaia: con 2 o más tortas en el carrito, el catering y masas saladas llevan 10% de descuento.";
 
   function appendChatMessage(text, fromBot) {
     const el = document.getElementById("chat-messages");
@@ -3166,19 +3166,19 @@
     
     // Only show promo text if chat is already open, do not force open
     if (chatOpen.value && !document.getElementById("chat-panel").classList.contains("hidden")) {
-      appendBotTypingMessage("¡Un detalle que me encanta contarte! Llevás dos tortas o más en el carrito: hoy tu catering y masas saladas tienen 20% de descuento. Aprovechalo y armá una mesa redonda. ✨", 1500);
+      appendBotTypingMessage("¡Un detalle que me encanta contarte! Llevás dos tortas o más en el carrito: hoy tu catering y masas saladas tienen 10% de descuento. Aprovechalo y armá una mesa redonda. ✨", 1500);
     }
   }
 
   function maestraReplyCumpleAniversario() {
     return (
-      "Para un cumple que brille en la mesa, te recomiendo la Marquise Saboramaia: es la favorita de la casa — base húmeda de chocolate, dulce de leche, chantilly y frutos rojos (aprox. 1,5 kg). Si preferís dulce de leche y chocolate, la Tarta Toffe Saboramaia con ganache premium; si buscás algo cítrico, el Lemon Pie con merengue italiano. 🎂"
+      "Para un cumple que brille en la mesa, te recomiendo la Torta 2 rellenos Saboramaia: es la favorita de la casa — base húmeda de chocolate, dulce de leche, chantilly y frutos rojos (aprox. 1,5 kg). Si preferís dulce de leche y chocolate, la Tarta Toffe Saboramaia con ganache premium; si buscás algo cítrico, el Lemon Pie con merengue italiano. 🎂"
     );
   }
 
   function maestraReplyEventosSalados() {
     return (
-      "Para eventos salados tenemos Chips de jamón y queso, pancitos saborizados, pan casero de campo y el Box Salada Premium (30 piezas: sándwiches de miga, empanaditas y pizzetas). Si en el mismo pedido llevás 2 tortas o más, el catering entra con 20% de descuento: mesa dulce y salada sin perder elegancia. ✨"
+      "Para eventos salados tenemos Chips de jamón y queso, pancitos saborizados. Si en el mismo pedido llevás 2 tortas o más, el catering entra con 10% de descuento: mesa dulce y salada sin perder elegancia. ✨"
     );
   }
 
