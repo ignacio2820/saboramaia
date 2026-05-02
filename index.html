@@ -137,6 +137,22 @@
     select.checkout-field {
       cursor: pointer;
     }
+    .checkout-agenda--reserva {
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+      box-shadow: 0 0 0 2px rgba(218, 0, 120, 0.32);
+      background: rgba(255, 232, 242, 0.24);
+    }
+    .checkout-agenda--reserva #entregaFecha,
+    .checkout-agenda--reserva #entregaHorario {
+      border-color: rgba(218, 0, 120, 0.5);
+    }
+    .checkout-byweight-notice {
+      border-radius: 0.75rem;
+      border: 1px solid rgba(218, 0, 120, 0.35);
+      background: linear-gradient(135deg, rgba(255, 232, 242, 0.65) 0%, rgba(255, 248, 230, 0.85) 100%);
+      box-shadow: 0 0 0 1px rgba(218, 0, 120, 0.12);
+    }
     .grain::before {
       content: "";
       position: fixed;
@@ -906,14 +922,16 @@
         <span class="font-semibold uppercase text-saboramaia-ink">TOTAL</span>
         <span id="cart-total" class="text-lg font-bold text-saboramaia-rosedeep">$0</span>
       </div>
+      <p id="cart-byweight-hint" class="hidden text-center text-[0.65rem] font-medium text-saboramaia-rosedeep/90">Incluye productos por peso — total estimado.</p>
       <button
         type="button"
         id="btn-proceed-checkout"
         class="btn-saboramaia-primary w-full rounded-full py-3.5 text-sm font-bold uppercase tracking-wide"
-        data-label-open="IR A LA RESERVA"
+        data-label-open="PAGAR AHORA"
         data-label-closed="Completar reserva"
+        data-label-byweight="CONFIRMAR RESERVA"
       >
-        IR A LA RESERVA
+        PAGAR AHORA
       </button>
       <button
         type="button"
@@ -952,6 +970,13 @@
         <span class="font-semibold text-saboramaia-rosedeep">Fuera del horario de atención.</span> Estás armando un pedido
         <strong>reservado</strong> para coordinar retiro o entrega en la franja que elijas (lun–dom <span class="text-saboramaia-ink">08:00 a 20:00 hs</span>) con la Maestra Pastelera.
       </p>
+      <p
+        id="checkout-byweight-notice"
+        class="checkout-byweight-notice mt-4 hidden px-3 py-2.5 text-xs font-medium leading-relaxed text-saboramaia-ink"
+        role="status"
+      >
+        <span class="font-semibold text-saboramaia-rosedeep">⚠️ Nota sobre tu pedido:</span> Incluiste productos que se venden por peso. El total mostrado es estimado. Una vez que la Maestra Pastelera pese el producto, te enviaremos el precio final por WhatsApp para que realices el pago.
+      </p>
       <form id="checkout-form" class="mt-6 space-y-6">
         <p
           id="checkout-welcome-back"
@@ -984,10 +1009,21 @@
             ></textarea>
           </div>
         </div>
-        <div>
-          <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">Pago <span class="text-saboramaia-rosedeep">*</span></p>
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
-            <label class="group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-saboramaia-rose/25 bg-white/75 px-3 py-3.5 transition hover:border-saboramaia-rosedeep/50 sm:flex-col sm:items-stretch sm:px-3 sm:py-4">
+        <div id="checkout-pago-section">
+          <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">Pago <span id="checkout-pago-required-star" class="text-saboramaia-rosedeep">*</span></p>
+          <div id="checkout-pago-pesaje" class="hidden">
+            <label class="group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-saboramaia-rose/35 bg-white/85 px-3 py-3.5 transition hover:border-saboramaia-rosedeep/55">
+              <input type="radio" name="pago" value="pendiente_pesaje" id="pago-pendiente-pesaje" class="peer sr-only" />
+              <span class="text-lg" aria-hidden="true">💬</span>
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm font-semibold text-saboramaia-ink">Pago tras pesaje</span>
+                <span class="mt-0.5 block text-[0.65rem] font-medium text-saboramaia-ink/65">Coordinamos el monto final por WhatsApp; no abonás el total estimado online.</span>
+              </span>
+              <span class="pointer-events-none absolute inset-0 rounded-2xl ring-2 ring-transparent transition peer-checked:ring-saboramaia-rosedeep/50" aria-hidden="true"></span>
+            </label>
+          </div>
+          <div id="checkout-pago-directo" class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <label class="checkout-pago-card group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-saboramaia-rose/25 bg-white/75 px-3 py-3.5 transition hover:border-saboramaia-rosedeep/50 sm:flex-col sm:items-stretch sm:px-3 sm:py-4">
               <input type="radio" name="pago" value="efectivo" class="peer sr-only" required />
               <span class="text-lg sm:text-center" aria-hidden="true">💵</span>
               <span class="min-w-0 flex-1 sm:text-center">
@@ -996,7 +1032,7 @@
               </span>
               <span class="pointer-events-none absolute inset-0 rounded-2xl ring-2 ring-transparent transition peer-checked:ring-saboramaia-rosedeep/50" aria-hidden="true"></span>
             </label>
-            <label class="group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-saboramaia-rose/25 bg-white/75 px-3 py-3.5 transition hover:border-saboramaia-rosedeep/50 sm:flex-col sm:items-stretch sm:px-3 sm:py-4">
+            <label class="checkout-pago-card group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-saboramaia-rose/25 bg-white/75 px-3 py-3.5 transition hover:border-saboramaia-rosedeep/50 sm:flex-col sm:items-stretch sm:px-3 sm:py-4">
               <input type="radio" name="pago" value="mercadopago" class="peer sr-only" />
               <span class="text-lg sm:text-center" aria-hidden="true">📱</span>
               <span class="min-w-0 flex-1 sm:text-center">
@@ -1005,7 +1041,7 @@
               </span>
               <span class="pointer-events-none absolute inset-0 rounded-2xl ring-2 ring-transparent transition peer-checked:ring-saboramaia-rosedeep/50" aria-hidden="true"></span>
             </label>
-            <label class="group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-saboramaia-rose/25 bg-white/75 px-3 py-3.5 transition hover:border-saboramaia-rosedeep/50 sm:flex-col sm:items-stretch sm:px-3 sm:py-4">
+            <label class="checkout-pago-card group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-saboramaia-rose/25 bg-white/75 px-3 py-3.5 transition hover:border-saboramaia-rosedeep/50 sm:flex-col sm:items-stretch sm:px-3 sm:py-4">
               <input type="radio" name="pago" value="transferencia" class="peer sr-only" />
               <span class="text-lg sm:text-center" aria-hidden="true">🏦</span>
               <span class="min-w-0 flex-1 sm:text-center">
@@ -1081,9 +1117,15 @@
             aria-required="true"
           />
         </div>
-        <div class="space-y-3">
+        <div id="checkout-agenda-section" class="space-y-3 transition-shadow duration-200">
           <p class="text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">
-            ¿Cuándo lo necesitás? <span class="text-saboramaia-rosedeep">*</span>
+            ¿Cuándo lo necesitás?<span id="checkout-agenda-required-marker" class="text-saboramaia-rosedeep hidden"> *</span>
+          </p>
+          <p id="checkout-agenda-hint-opcional" class="text-[0.65rem] leading-snug text-saboramaia-ink/70">
+            Opcional: Si lo querés para ahora, dejanos los campos vacíos.
+          </p>
+          <p id="checkout-agenda-hint-reserva" class="hidden text-[0.65rem] leading-snug text-saboramaia-rosedeep/90">
+            Reserva: completá fecha y franja. Anticipación mínima: <span id="checkout-agenda-min-hours">48</span> hs.
           </p>
           <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
             <div class="min-w-0 flex-1">
@@ -1092,9 +1134,8 @@
                 type="date"
                 id="entregaFecha"
                 name="entregaFecha"
-                required
                 class="checkout-field min-h-[44px] w-full rounded-xl px-3 py-2 text-sm font-medium text-saboramaia-ink"
-                aria-required="true"
+                aria-required="false"
               />
             </div>
             <div class="min-w-0 flex-1">
@@ -1102,11 +1143,10 @@
               <select
                 id="entregaHorario"
                 name="entregaHorario"
-                required
                 class="checkout-field min-h-[44px] w-full rounded-xl px-3 py-2 text-sm font-medium text-saboramaia-ink"
-                aria-required="true"
+                aria-required="false"
               >
-                <option value="" disabled selected>Seleccionar franja</option>
+                <option value="">— Sin indicar: entrega inmediata —</option>
                 <option value="10:00 a 13:00">10:00 a 13:00</option>
                 <option value="17:00 a 20:00">17:00 a 20:00</option>
               </select>
@@ -1132,9 +1172,10 @@
             <span id="checkout-summary-shipping">$0</span>
           </div>
           <div class="flex items-center justify-between border-t border-saboramaia-rose/20 pt-2 text-base font-bold uppercase tracking-wide text-saboramaia-rosedeep">
-            <span>Monto Total a Pagar</span>
+            <span id="checkout-summary-total-label">Monto Total a Pagar</span>
             <span id="checkout-summary-total" class="total-flash">$0</span>
           </div>
+          <p id="checkout-summary-estimado-hint" class="hidden text-[0.65rem] font-medium text-saboramaia-rosedeep/85">Total estimado: sujeto a pesaje.</p>
           <p id="checkout-shipping-upsell" class="hidden rounded-lg border border-saboramaia-rose/20 bg-white/45 px-2.5 py-2 text-[0.7rem] font-semibold text-saboramaia-ink"></p>
         </div>
         <div class="flex flex-col gap-3 sm:flex-row">
@@ -1396,12 +1437,7 @@
     }
     const notice = document.getElementById("checkout-reserva-notice");
     if (notice) notice.classList.toggle("hidden", open);
-    const proceed = document.getElementById("btn-proceed-checkout");
-    if (proceed) {
-      proceed.textContent = open
-        ? (proceed.getAttribute("data-label-open") || "IR A LA RESERVA")
-        : (proceed.getAttribute("data-label-closed") || "Completar reserva");
-    }
+    updateProceedCheckoutButtonLabel();
     const primaryCta = document.getElementById("btn-primary-cta");
     if (primaryCta) {
       primaryCta.textContent = open ? "Pedir ahora" : "Hacer Reserva";
@@ -1471,119 +1507,179 @@
 
   const PRODUCTS = [
     {
-      id: "postre-rogel",
+      id: "tarta-coco",
       category: "torta",
-      name: "Postre Rogel",
-      desc: "Capas crujientes de masa artesanal con generoso dulce de leche y merengue italiano flambeado.",
-      rellenos: "Dulce de leche, merengue italiano.",
-      peso: "Porciones según formato",
-      price: 27800,
-      image: "assets/rogel.jpg",
+      name: "Tarta de Coco",
+      desc: "Tarta de coco con dulce de leche tamaño 26cm",
+      price: 13999,
+      image: "assets/tarta.coco.jpg",
     },
     {
-      id: "brownie-saboramaia",
+      id: "tarta-toffe",
       category: "torta",
-      name: "Brownie Saboramaia",
-      desc: "Brownie super húmedo de chocolate premium, con nueces y copo de dulce de leche.",
-      rellenos: "Chocolate premium, nueces, dulce de leche.",
-      peso: "Formato brownie",
-      price: 21500,
-      image: "assets/browni.jpg",
-    },
-    {
-      id: "torta-manzana-receta-abuela",
-      category: "torta",
-      name: "Torta de Manzana",
-      desc: "Receta de la abuela: manzanas caramelizadas sobre masa suave y crocante de azúcar mascabado.",
-      rellenos: "Manzanas caramelizadas, crocante de azúcar mascabado.",
-      peso: "Consultar porciones",
-      price: 23800,
-      image:
-        "https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: "torta-marquise-saboramaia",
-      category: "torta",
-      name: "Marquise Saboramaia",
-      desc: "Base húmeda de chocolate, dulce de leche, crema chantilly y frutos rojos. La favorita de la casa.",
-      rellenos: "Chocolate, dulce de leche artesanal, chantilly y frutos rojos frescos.",
-      peso: "Peso aprox: 1,5 kg",
-      price: 28500,
-      image:
-        "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&q=80&auto=format&fit=crop",
-    },
-    {
-      id: "torta-tarta-toffe-saboramaia",
-      category: "torta",
-      name: "Tarta Toffe Saboramaia",
-      desc: "Base de masa quebrada, abundante dulce de leche y cobertura de chocolate ganache premium.",
-      rellenos: "Masa quebrada, dulce de leche, ganache premium.",
-      peso: "Consultar formato y porciones",
-      price: 23200,
+      name: "Tarta Toffe",
+      desc: "Base de Dulce de Leche cubierta con chocolate tamaño 26cm",
+      price: 14999,
       image: "assets/tarta.toffe.jpg",
     },
     {
-      id: "torta-lemon-pie-especial",
+      id: "torta-criolla",
       category: "torta",
-      name: "Lemon Pie",
-      desc: "Crocante masa quebrada, crema de limón natural y el más suave merengue italiano.",
-      rellenos: "Crema de limón natural, merengue italiano.",
-      peso: "8 a 10 porciones",
-      price: 22500,
-      image: "assets/lemom.pie.jpg",
+      name: "Torta Criolla",
+      desc: "Torta Criolla con crema pastelera tamaño 30cm",
+      price: 7999,
+      image: "assets/torta.criolla.jpg",
     },
     {
-      id: "torta-red-velvet",
+      id: "torta-pera-manzana",
       category: "torta",
-      name: "Red Velvet",
-      desc: "Bizcochuelo aterciopelado con frosting de cream cheese. Elegancia pura.",
-      rellenos: "Cream cheese frosting, toques de cacao.",
-      peso: "Porciones estándar (consultar)",
-      price: 24800,
+      name: "Torta Pera/Manzana",
+      desc: "Torta de pera o manzana tamaño 22cm",
+      price: 7999,
+      image: "assets/torta.manzanaypera.jpg",
+    },
+    {
+      id: "rogel",
+      category: "torta",
+      name: "Rogel",
+      desc: "Rogel tamaño 20cm",
+      price: 15999,
+      image: "assets/rogel.jpg",
+    },
+    {
+      id: "tartas-frutales",
+      category: "torta",
+      name: "Tartas Frutales",
+      desc: "Tartas frutales de estación tamaño 26cm",
+      price: 14999,
+      image: "assets/tartas.frutales.jpg",
+    },
+    {
+      id: "torta-cumple-2-rellenos",
+      category: "torta",
+      name: "Torta Cumple 2 Rellenos",
+      desc: "Torta decorada con crema, 2 rellenos a elección (Precio x kg)",
+      price: 19999,
+      isByWeight: true,
+      image: "assets/tortas.cumple2rellenos.jpg",
+    },
+    {
+      id: "tarta-banana-split",
+      category: "torta",
+      name: "Tarta Banana Split",
+      desc: "Tarta Banana Split tamaño 26cm",
+      price: 14999,
+      image: "assets/Tarta.banasplit.jpg",
+    },
+    {
+      id: "torta-cumpleanos",
+      category: "torta",
+      name: "Torta de Cumpleaños",
+      desc: "Tortas de cumple, 2 rellenos (Precio x kg)",
+      price: 19999,
+      isByWeight: true,
+      image: "assets/tortas.cumpleaños.jpg",
+    },
+    {
+      id: "chocotorta",
+      category: "torta",
+      name: "Chocotorta",
+      desc: "Chocotorta clásica (Precio x kg)",
+      price: 19999,
+      isByWeight: true,
       image:
-        "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1606313564200-e75d5e984752?auto=format&fit=crop&w=800&q=85",
     },
     {
-      id: "cat-chips-jamon-queso",
-      category: "catering",
-      name: "Chips de Jamón y Queso",
-      desc: "Pancitos de leche súper tiernos ideales para compartir en eventos.",
-      rellenos: "Jamón, queso, pancitos de leche.",
-      peso: "Bandeja surtida (consultar)",
-      price: 19200,
-      image: "assets/chips.jamonyqueso.jpg",
+      id: "postre-chaja",
+      category: "torta",
+      name: "Postre Chaja",
+      desc: "Postre Chaja tradicional (Precio x kg)",
+      price: 14999,
+      isByWeight: true,
+      image: "assets/postre.chaja.jpg",
     },
     {
-      id: "cat-pancitos-saborizados",
-      category: "catering",
-      name: "Pancitos Saborizados",
-      desc: "Variedad de panes caseros con queso, orégano y cebolla caramelizada.",
-      rellenos: "Queso, orégano, cebolla caramelizada.",
-      peso: "Docena / pedido mínimo (consultar)",
-      price: 24800,
-      image: "assets/pancitos.saborizados.jpg",
+      id: "brownie",
+      category: "torta",
+      name: "Brownie",
+      desc: "Brownie clásico tamaño 22cm",
+      price: 14999,
+      image: "assets/browni.jpg",
     },
     {
-      id: "cat-pan-casero-campo",
+      id: "chips-saborizados-rellenos",
       category: "catering",
-      name: "Pan Casero de Campo",
-      desc: "Corteza crocante y miga aireada, horneado en el día.",
-      rellenos: "Masa madre y harinas seleccionadas.",
-      peso: "Unidad / bandeja",
-      price: 16500,
+      name: "Chips Saborizados Rellenos",
+      desc: "Chips saborizados con milanesa o con jamón y queso x 50 unidades",
+      price: 24999,
+      isByWeight: false,
+      image: "assets/chip.jamonyqueso.jpg",
+    },
+    {
+      id: "pan-flauta-saborizado",
+      category: "catering",
+      name: "Pan Flauta Saborizado",
+      desc: "Pan flauta de 20cm de largo saborizado x 250gs (Precio por unidad)",
+      price: 5999,
+      isByWeight: false,
       image:
-        "https://images.unsplash.com/photo-1585478259715-876a6a81fc08?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=85",
     },
     {
-      id: "cat-box-salada-premium",
+      id: "empanadas-jamon-queso",
       category: "catering",
-      name: "Box Salada Premium",
-      desc: "30 piezas: sándwiches de miga, empanaditas de copetín y pizzetas artesanales.",
-      rellenos: "Surtido salado premium para mesa o cóctel.",
-      peso: "30 piezas",
-      price: 46500,
+      name: "Empanadas de Jamón y Queso",
+      desc: "Empanadas listas para hornear o freezar x 6 unidades",
+      price: 6500,
+      isByWeight: false,
+      image: "assets/empanadas.jamonyqueso.jpg",
+    },
+    {
+      id: "chips-sin-relleno",
+      category: "catering",
+      name: "Chips sin Relleno",
+      desc: "Chips simples o saborizados x 50 unidades sin relleno",
+      price: 21999,
+      isByWeight: false,
       image:
-        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=800&q=85",
+    },
+    {
+      id: "pizzetas",
+      category: "catering",
+      name: "Pizzetas",
+      desc: "Pizzetas clásicas x 12 unidades",
+      price: 2500,
+      isByWeight: false,
+      image: "assets/pizzetas.jpg",
+    },
+    {
+      id: "pizzetas-integrales",
+      category: "catering",
+      name: "Pizzetas Integrales",
+      desc: "Pizzetas integrales x 12 unidades",
+      price: 3500,
+      isByWeight: false,
+      image: "assets/pizzetas.integrales.jpg",
+    },
+    {
+      id: "panes-caseros-chia",
+      category: "catering",
+      name: "Panes Caseros con Chía",
+      desc: "Panes caseros con semillas de Chía",
+      price: 4999,
+      isByWeight: false,
+      image: "assets/pan.chia.jpg",
+    },
+    {
+      id: "chips-integrales",
+      category: "catering",
+      name: "Chips Integrales",
+      desc: "Chips integrales por pack de 250gs",
+      price: 3999,
+      isByWeight: false,
+      image: "assets/chip.integrales.jpg",
     },
   ];
 
@@ -1608,9 +1704,11 @@
       if (!raw) {
         PRODUCTS.forEach((p) => {
           p.hasStock = true;
+          p.isByWeight = p.isByWeight === true;
         });
         minReservationHours = 48;
         updatePromoGlobalBanner();
+        updateProceedCheckoutButtonLabel();
         return;
       }
       const cfg = JSON.parse(raw);
@@ -1619,6 +1717,12 @@
           p.hasStock = cfg.stock[p.id];
         } else {
           p.hasStock = true;
+        }
+        const catalogBw = p.isByWeight === true;
+        if (cfg.byWeight && typeof cfg.byWeight[p.id] === "boolean") {
+          p.isByWeight = cfg.byWeight[p.id];
+        } else {
+          p.isByWeight = catalogBw;
         }
       });
       if (typeof cfg.minReservationHours === "number" && cfg.minReservationHours > 0) {
@@ -1647,6 +1751,7 @@
       promoCouponsRules = defaultPromoCouponsRules();
       PRODUCTS.forEach((p) => {
         p.hasStock = true;
+        p.isByWeight = p.isByWeight === true;
       });
     }
     updatePromoGlobalBanner();
@@ -2082,10 +2187,22 @@
         ? `<p class="mt-2 text-[0.7rem] font-medium leading-relaxed text-saboramaia-muted">${p.rellenos ? `<span class="block"><span class="font-semibold text-saboramaia-ink">Rellenos:</span> ${p.rellenos}</span>` : ""}${p.peso ? `<span class="mt-1 block"><span class="font-semibold text-saboramaia-ink">Peso aprox.:</span> ${p.peso}</span>` : ""}</p>`
         : "";
     const hasStock = p.hasStock !== false;
-    const stockHint = hasStock
-      ? "🚀 ¡Hay Stock! Entrega inmediata"
-      : "📅 Producto para reserva (mínimo " + minReservationHours + "hs)";
-    const stockHintClass = hasStock ? "text-emerald-700" : "text-saboramaia-rosedeep";
+    let stockHint;
+    let stockHintClass;
+    if (p.isByWeight === true) {
+      stockHint =
+        "⚖️ Precio por kg — el total final se confirma al pesar; en el carrito coordinamos pago tras pesaje.";
+      stockHintClass = "text-saboramaia-rosedeep";
+    } else {
+      stockHint = hasStock
+        ? "🚀 ¡Hay Stock! Entrega inmediata"
+        : "📅 Producto para reserva (mínimo " + minReservationHours + "hs)";
+      stockHintClass = hasStock ? "text-emerald-700" : "text-saboramaia-rosedeep";
+    }
+    const priceMain =
+      p.isByWeight === true
+        ? `${formatMoney(p.price)} <span class="text-sm font-bold text-saboramaia-ink/80">x kg</span>`
+        : formatMoney(p.price);
     return `
       <article class="${cardClass}">
         <div class="${imageFrameClass}">
@@ -2098,7 +2215,7 @@
           <p class="mt-3 text-[0.78rem] font-semibold leading-snug ${stockHintClass}" role="status">${stockHint}</p>
           ${extraMeta}
           <div class="mt-4 flex items-end justify-between gap-3">
-            <span class="text-lg font-bold text-saboramaia-rosedeep">${formatMoney(p.price)}</span>
+            <span class="text-lg font-bold text-saboramaia-rosedeep">${priceMain}</span>
             <button
               type="button"
               class="add-to-cart btn-saboramaia-primary inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wide shadow-md"
@@ -2115,6 +2232,8 @@
     const catering = PRODUCTS.filter((p) => p.category === "catering");
     document.getElementById("grid-tortas").innerHTML = tortas.map(renderProductCard).join("");
     document.getElementById("grid-catering").innerHTML = catering.map(renderProductCard).join("");
+    const cateringSection = document.getElementById("catering");
+    if (cateringSection) cateringSection.classList.toggle("hidden", catering.length === 0);
   }
 
   const cookingToastTimers = { t1: null, t2: null, seq: 0 };
@@ -2252,6 +2371,13 @@
       footEl.classList.add("hidden");
       clearHoraReserva();
       updateReservaBlock();
+      const bywHintEmpty = document.getElementById("cart-byweight-hint");
+      if (bywHintEmpty) bywHintEmpty.classList.add("hidden");
+      updateProceedCheckoutButtonLabel();
+      if (isCheckoutModalOpen()) {
+        updateCheckoutEntregaUi();
+        updateCheckoutByWeightUi();
+      }
       return;
     }
     emptyEl.classList.add("hidden");
@@ -2308,12 +2434,14 @@
         if (p.category === "catering" && t.promoActive) {
           unitNote = ' <span class="text-xs text-green-600/90">(−20% promo)</span>';
         }
+        const byKgNote =
+          p.isByWeight === true ? ' <span class="text-saboramaia-ink/70">· x kg</span>' : "";
         return `
           <div class="cart-line mb-3 flex gap-3 rounded-xl border border-saboramaia-rose/25 bg-white/90 p-3 shadow-inner shadow-black/20" data-cart-line-id="${p.id}" data-line="${p.id}">
             <img src="${p.image}" alt="" class="h-16 w-20 flex-shrink-0 rounded-lg object-cover" width="80" height="64" />
             <div class="min-w-0 flex-1">
               <p class="text-sm font-semibold text-saboramaia-ink line-clamp-2">${p.name}</p>
-              <p class="text-xs font-medium text-saboramaia-ink/75">${formatMoney(p.price)} c/u${unitNote}</p>
+              <p class="text-xs font-medium text-saboramaia-ink/75">${formatMoney(p.price)} c/u${byKgNote}${unitNote}</p>
               <div class="mt-2 flex items-center gap-2">
                 <button type="button" class="cart-minus h-8 w-8 flex-shrink-0 rounded-lg border border-saboramaia-rose/35 text-saboramaia-ink transition hover:border-saboramaia-rosedeep/50 hover:bg-saboramaia-rose/15" data-id="${p.id}" aria-label="Quitar una unidad">−</button>
                 <span class="min-w-[1.5rem] text-center text-sm font-bold tabular-nums text-saboramaia-rosedeep">${line.qty}</span>
@@ -2326,6 +2454,13 @@
       })
       .join("");
     updateReservaBlock();
+    const bywHint = document.getElementById("cart-byweight-hint");
+    if (bywHint) bywHint.classList.toggle("hidden", !cartHasByWeightProducts());
+    updateProceedCheckoutButtonLabel();
+    if (isCheckoutModalOpen()) {
+      updateCheckoutEntregaUi();
+      updateCheckoutByWeightUi();
+    }
   }
 
   function openCart() {
@@ -2369,7 +2504,8 @@
     direccionField.setAttribute("required", "required");
     const horarioSel = document.getElementById("entregaHorario");
     if (horarioSel) horarioSel.selectedIndex = 0;
-    syncEntregaFechaMin();
+    updateCheckoutEntregaUi();
+    updateCheckoutByWeightUi();
     restoreCustomerFromStorage({ showWelcome: true });
     const modal = document.getElementById("checkout-modal");
     const content = document.getElementById("checkout-modal-content");
@@ -2417,6 +2553,7 @@
     if (code === "efectivo") return "Efectivo (en local / delivery)";
     if (code === "mercadopago") return "Mercado Pago (QR / link)";
     if (code === "transferencia") return "Transferencia bancaria";
+    if (code === "pendiente_pesaje") return "Pago tras pesaje (precio final por WhatsApp)";
     return code ? String(code) : "(no indicado)";
   }
 
@@ -2438,17 +2575,152 @@
     );
   }
 
+  function dateToIsoLocal(d) {
+    return (
+      d.getFullYear() +
+      "-" +
+      String(d.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(d.getDate()).padStart(2, "0")
+    );
+  }
+
+  function getMinDateIsoForReservation() {
+    const d = new Date();
+    d.setTime(d.getTime() + minReservationHours * 60 * 60 * 1000);
+    return dateToIsoLocal(d);
+  }
+
+  function cartRequiresReservationSchedule() {
+    for (const line of cart) {
+      const p = getProductById(line.id);
+      if (p && p.hasStock === false) return true;
+    }
+    return false;
+  }
+
+  /** True si el carrito incluye al menos un producto vendido por peso (precio referencial hasta pesaje). */
+  function cartHasByWeightProducts() {
+    for (const line of cart) {
+      const p = getProductById(line.id);
+      if (p && p.isByWeight === true) return true;
+    }
+    return false;
+  }
+
+  function updateProceedCheckoutButtonLabel() {
+    const proceed = document.getElementById("btn-proceed-checkout");
+    if (!proceed) return;
+    if (cart.length && cartHasByWeightProducts()) {
+      proceed.textContent = proceed.getAttribute("data-label-byweight") || "CONFIRMAR RESERVA";
+      return;
+    }
+    const open = isKitchenOpen();
+    proceed.textContent = open
+      ? (proceed.getAttribute("data-label-open") || "PAGAR AHORA")
+      : (proceed.getAttribute("data-label-closed") || "Completar reserva");
+  }
+
+  /**
+   * Modo reserva por peso: aviso, solo "pago tras pesaje", oculta MP/transferencia/efectivo inmediato.
+   * Se invoca al renderizar carrito, abrir checkout y cuando cambia el catálogo vía storage.
+   */
+  function updateCheckoutByWeightUi() {
+    const bw = cart.length > 0 && cartHasByWeightProducts();
+    const notice = document.getElementById("checkout-byweight-notice");
+    const pesaje = document.getElementById("checkout-pago-pesaje");
+    const directo = document.getElementById("checkout-pago-directo");
+    const estimado = document.getElementById("checkout-summary-estimado-hint");
+    const totalLbl = document.getElementById("checkout-summary-total-label");
+    const pendienteRadio = document.getElementById("pago-pendiente-pesaje");
+    const directRadios = document.querySelectorAll('#checkout-pago-directo input[name="pago"]');
+
+    if (notice) notice.classList.toggle("hidden", !bw);
+    if (pesaje) pesaje.classList.toggle("hidden", !bw);
+    if (directo) directo.classList.toggle("hidden", bw);
+    if (estimado) estimado.classList.toggle("hidden", !bw);
+    if (totalLbl) {
+      totalLbl.textContent = bw ? "Total estimado (hasta pesaje)" : "Monto Total a Pagar";
+    }
+
+    if (bw) {
+      directRadios.forEach((r) => {
+        r.removeAttribute("required");
+        r.checked = false;
+      });
+      if (pendienteRadio) {
+        pendienteRadio.checked = true;
+        pendienteRadio.setAttribute("required", "required");
+      }
+    } else {
+      if (pendienteRadio) {
+        pendienteRadio.removeAttribute("required");
+        pendienteRadio.checked = false;
+      }
+      const efectivo = document.querySelector('#checkout-pago-directo input[name="pago"][value="efectivo"]');
+      if (efectivo) efectivo.setAttribute("required", "required");
+    }
+    updateTransferenciaPanel();
+  }
+
+  function isCheckoutModalOpen() {
+    const modal = document.getElementById("checkout-modal");
+    return !!(modal && !modal.classList.contains("hidden"));
+  }
+
+  function updateCheckoutEntregaUi() {
+    const wrap = document.getElementById("checkout-agenda-section");
+    const fecha = document.getElementById("entregaFecha");
+    const horario = document.getElementById("entregaHorario");
+    const marker = document.getElementById("checkout-agenda-required-marker");
+    const hintOp = document.getElementById("checkout-agenda-hint-opcional");
+    const hintRes = document.getElementById("checkout-agenda-hint-reserva");
+    const hoursSpan = document.getElementById("checkout-agenda-min-hours");
+    if (!fecha || !horario) return;
+
+    const needs = cartRequiresReservationSchedule();
+    if (hoursSpan) hoursSpan.textContent = String(minReservationHours);
+
+    if (wrap) wrap.classList.toggle("checkout-agenda--reserva", needs);
+    if (marker) marker.classList.toggle("hidden", !needs);
+    if (hintOp) hintOp.classList.toggle("hidden", needs);
+    if (hintRes) hintRes.classList.toggle("hidden", !needs);
+
+    const opt0 = horario.options[0];
+    if (needs) {
+      fecha.setAttribute("required", "required");
+      fecha.setAttribute("aria-required", "true");
+      horario.setAttribute("required", "required");
+      horario.setAttribute("aria-required", "true");
+      const minIso = getMinDateIsoForReservation();
+      fecha.min = minIso;
+      if (fecha.value && fecha.value < minIso) fecha.value = "";
+      if (opt0) {
+        opt0.value = "";
+        opt0.textContent = "Seleccionar franja";
+        opt0.disabled = true;
+      }
+    } else {
+      fecha.removeAttribute("required");
+      fecha.setAttribute("aria-required", "false");
+      horario.removeAttribute("required");
+      horario.setAttribute("aria-required", "false");
+      const minToday = todayIsoLocal();
+      fecha.min = minToday;
+      if (fecha.value && fecha.value < minToday) fecha.value = "";
+      if (opt0) {
+        opt0.value = "";
+        opt0.textContent = "— Sin indicar: entrega inmediata —";
+        opt0.disabled = false;
+      }
+    }
+  }
+
   function formatDateEsAR(isoYmd) {
     if (!isoYmd || !/^\d{4}-\d{2}-\d{2}$/.test(isoYmd)) return isoYmd || "";
     const parts = isoYmd.split("-").map(Number);
     const dt = new Date(parts[0], parts[1] - 1, parts[2]);
     return dt.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  }
-
-  function syncEntregaFechaMin() {
-    const el = document.getElementById("entregaFecha");
-    if (!el) return;
-    el.min = todayIsoLocal();
   }
 
   function getCheckoutData() {
@@ -2460,31 +2732,48 @@
     const pago = form.querySelector('input[name="pago"]:checked')?.value || "";
     const cupon = (form.cupon && form.cupon.value) ? form.cupon.value.trim() : "";
     const direccion = form.direccion && form.direccion.value ? form.direccion.value.trim() : "";
+    const needsReserva = cartRequiresReservationSchedule();
+
     if (!clientName) {
       alert("Necesitamos tu nombre completo para identificar el pedido con cuidado.");
       return null;
     }
-    if (!entregaFecha) {
-      alert("Indicá la fecha en que necesitás el pedido.");
-      return null;
+
+    if (needsReserva) {
+      if (!entregaFecha || !entregaHorario) {
+        alert("Tu pedido incluye productos por encargo: completá fecha y franja de entrega.");
+        return null;
+      }
+      const minIso = getMinDateIsoForReservation();
+      if (entregaFecha < minIso) {
+        alert("Elegí una fecha con al menos " + minReservationHours + " horas de anticipación.");
+        return null;
+      }
+    } else {
+      if ((entregaFecha && !entregaHorario) || (!entregaFecha && entregaHorario)) {
+        alert("Completá fecha y franja juntos, o dejá ambos vacíos si preferís entrega a la brevedad.");
+        return null;
+      }
     }
-    if (!entregaHorario) {
-      alert("Elegí un horario aproximado para entrega o retiro.");
-      return null;
+
+    if (entregaFecha) {
+      const feParts = entregaFecha.split("-").map(Number);
+      if (feParts.length !== 3 || !feParts[0]) {
+        alert("La fecha de entrega no es válida.");
+        return null;
+      }
+      const pick = new Date(feParts[0], feParts[1] - 1, feParts[2]);
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+      pick.setHours(0, 0, 0, 0);
+      if (pick < startOfToday) {
+        alert("La fecha de entrega no puede ser anterior a hoy.");
+        return null;
+      }
     }
-    const feParts = entregaFecha.split("-").map(Number);
-    if (feParts.length !== 3 || !feParts[0]) {
-      alert("La fecha de entrega no es válida.");
-      return null;
-    }
-    const pick = new Date(feParts[0], feParts[1] - 1, feParts[2]);
-    const startOfToday = new Date();
-    startOfToday.setHours(0, 0, 0, 0);
-    pick.setHours(0, 0, 0, 0);
-    if (pick < startOfToday) {
-      alert("La fecha de entrega no puede ser anterior a hoy.");
-      return null;
-    }
+
+    const entregaInmediata = !needsReserva && !entregaFecha && !entregaHorario;
+
     if (!entrega) {
       alert("Indicá si preferís envío a domicilio o retiro en local.");
       return null;
@@ -2495,6 +2784,12 @@
     }
     if (!pago) {
       alert("Seleccioná cómo preferís abonar para cerrar el pedido.");
+      return null;
+    }
+    const reservaPorPeso = cartHasByWeightProducts();
+    if (reservaPorPeso && pago !== "pendiente_pesaje") {
+      alert("Este pedido incluye productos por peso: el pago se coordina después del pesaje por WhatsApp.");
+      updateCheckoutByWeightUi();
       return null;
     }
     const selH = document.getElementById("cart-reserva-hora");
@@ -2512,11 +2807,13 @@
       clientName,
       entregaFecha,
       entregaHorario,
+      entregaInmediata,
       entrega,
       pago,
       cupon,
       direccion: entrega === "domicilio" ? direccion : "",
       horaReserva,
+      reservaPorPeso,
     };
   }
 
@@ -2524,10 +2821,17 @@
     const t = calculateCartTotals(checkout.entrega);
     const shippingText = t.deliveryMethod === "retiro" ? "Sin cargo" : (t.isShippingFree ? "GRATIS" : formatMoney(t.shippingFee));
     const lines = [];
+    if (checkout.reservaPorPeso) {
+      lines.push("🔔 NUEVA RESERVA POR PESO");
+      lines.push("");
+    }
     lines.push("¡Hola Saboramaia! Quiero realizar el siguiente pedido de pastelería:");
     lines.push(`*Cliente:* ${checkout.clientName}`);
-    lines.push("📅 Fecha: " + formatDateEsAR(checkout.entregaFecha));
-    lines.push("⏰ Horario: " + checkout.entregaHorario);
+    if (checkout.entregaInmediata) {
+      lines.push("🚀 Pedido para Entrega Inmediata");
+    } else {
+      lines.push("📅 Reserva para el día: " + formatDateEsAR(checkout.entregaFecha) + " a las " + checkout.entregaHorario);
+    }
     lines.push("");
     if (forceReservaWhatsapp || !isKitchenOpen()) {
       lines.push("*" + RESERVA_WHATSAPP_TAG + "*");
@@ -2542,6 +2846,10 @@
       lines.push(`• ${p.name} x${line.qty} — ${formatMoney(p.price * line.qty)}`);
     }
     lines.push("");
+    if (checkout.reservaPorPeso) {
+      lines.push("Pendiente de pesaje para informar precio final al cliente.");
+      lines.push("");
+    }
     if (checkout.horaReserva) {
       lines.push("⏰ HORA SOLICITADA: " + checkout.horaReserva);
       lines.push("");
@@ -3050,6 +3358,10 @@
     applyReservationTextsToDom();
     renderGrids();
     renderCart();
+    if (isCheckoutModalOpen()) {
+      updateCheckoutEntregaUi();
+      updateCheckoutByWeightUi();
+    }
     updateCuponFeedback();
     updateHornoEstadoBanner();
   });
