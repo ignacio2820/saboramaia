@@ -1,0 +1,14 @@
+{
+  "name": "Saboramaia",
+  "short_name": "Saboramaia",
+  "start_url": "./admin.html",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
