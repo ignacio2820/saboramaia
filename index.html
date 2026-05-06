@@ -202,6 +202,21 @@
     @keyframes blink {
       50% { opacity: 0; }
     }
+    /* Catálogo móvil: carrusel horizontal + snap; desde breakpoint md (768px) se usa grilla */
+    .catalog-strip-scrollbar {
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (max-width: 767px) {
+      .catalog-strip-scrollbar {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .catalog-strip-scrollbar::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+    }
     .product-card-image {
       transform: scale(1);
       will-change: transform;
@@ -770,7 +785,12 @@
                 </p>
               </div>
             </div>
-            <div id="grid-tortas" class="mt-5 grid grid-cols-1 gap-5 sm:mt-10 sm:gap-8 lg:gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"></div>
+            <div class="-mx-2 px-2 md:mx-0 md:px-0">
+              <div
+                id="grid-tortas"
+                class="catalog-strip-scrollbar mt-5 flex snap-x snap-mandatory flex-row flex-nowrap gap-5 overflow-x-auto overscroll-x-contain pb-2 scroll-pl-3 scroll-pr-3 sm:mt-10 sm:gap-8 lg:gap-10 md:mt-10 md:grid md:snap-none md:grid-cols-2 md:gap-8 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-4 lg:gap-10"
+              ></div>
+            </div>
           </div>
           <div id="catering" class="scroll-mt-24">
             <div class="relative overflow-hidden rounded-3xl border border-saboramaia-rose/35 bg-gradient-to-br from-saboramaia-roselight/12 via-white/95 to-saboramaia-cream p-4 shadow-2xl shadow-black/50 sm:p-10">
@@ -802,7 +822,12 @@
               </div>
             </div>
             <p class="mt-10 text-center text-sm font-medium text-saboramaia-ink/85 sm:text-left">Elegí abajo: dos líneas de producto, el mismo cuidado Saboramaia.</p>
-            <div id="grid-catering" class="mt-8 grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-8 lg:gap-10 lg:grid-cols-3 xl:grid-cols-4"></div>
+            <div class="-mx-2 px-2 md:mx-0 md:px-0">
+              <div
+                id="grid-catering"
+                class="catalog-strip-scrollbar mx-auto mt-8 flex max-w-6xl snap-x snap-mandatory flex-row flex-nowrap gap-5 overflow-x-auto overscroll-x-contain pb-2 scroll-pl-3 scroll-pr-3 sm:gap-8 lg:gap-10 md:grid md:snap-none md:grid-cols-2 md:gap-8 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-4"
+              ></div>
+            </div>
           </div>
         </div>
       </section>
@@ -2268,7 +2293,7 @@
 
   function renderProductCard(p) {
     const cardClass =
-      "product-card group flex flex-col overflow-hidden rounded-2xl border border-saboramaia-rose/25 bg-white shadow-md shadow-saboramaia-rose/10 ring-1 ring-inset ring-saboramaia-rose/10 transition hover:border-saboramaia-rosedeep/55 hover:shadow-saboramaia-rose/15";
+      "product-card group flex min-w-[80vw] max-w-[80vw] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-saboramaia-rose/25 bg-white shadow-md shadow-saboramaia-rose/10 ring-1 ring-inset ring-saboramaia-rose/10 transition hover:border-saboramaia-rosedeep/55 hover:shadow-saboramaia-rose/15 md:min-w-0 md:max-w-none md:shrink md:snap-none";
     const imgClass = "product-card-image h-full w-full object-cover";
     const imageFrameClass =
       "relative aspect-[4/3] overflow-hidden rounded-xl border border-[#f9f5f2]/50 bg-saboramaia-cream";
