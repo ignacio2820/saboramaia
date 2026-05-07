@@ -1138,7 +1138,7 @@
               </span>
               <span class="pointer-events-none absolute inset-0 rounded-2xl ring-2 ring-transparent transition peer-checked:ring-saboramaia-rosedeep/50" aria-hidden="true"></span>
             </label>
-            <label id="pago-transferencia-card" class="checkout-pago-card group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-saboramaia-rose/25 bg-white/75 px-3 py-3.5 transition hover:border-saboramaia-rosedeep/50 sm:flex-col sm:items-stretch sm:px-3 sm:py-4">
+            <label class="checkout-pago-card group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-saboramaia-rose/25 bg-white/75 px-3 py-3.5 transition hover:border-saboramaia-rosedeep/50 sm:flex-col sm:items-stretch sm:px-3 sm:py-4">
               <input type="radio" name="pago" value="transferencia" class="peer sr-only" />
               <span class="text-lg sm:text-center" aria-hidden="true">🏦</span>
               <span class="min-w-0 flex-1 sm:text-center">
@@ -1805,9 +1805,7 @@
   ];
 
   const LS_ADMIN_CONFIG = "saboramaia_config";
-  const LS_PAYMENT_CONFIG = "admin_payment_config";
   let minReservationHours = 48;
-  let paymentConfig = { enabled: false, holder: "", alias: "", cbu: "" };
 
   function defaultPromoCouponsRules() {
     return {
@@ -1847,10 +1845,6 @@
         } else {
           p.isByWeight = catalogBw;
         }
-        if (cfg.prices && typeof cfg.prices === "object") {
-          const n = Number(cfg.prices[p.id]);
-          if (Number.isFinite(n) && n >= 0) p.price = Math.round(n);
-        }
       });
       if (typeof cfg.minReservationHours === "number" && cfg.minReservationHours > 0) {
         minReservationHours = cfg.minReservationHours;
@@ -1883,46 +1877,6 @@
     }
     updatePromoGlobalBanner();
   }
-
-  function mergePaymentConfig() {
-    let cfg = null;
-    try {
-      const raw = localStorage.getItem(LS_PAYMENT_CONFIG);
-      if (raw) cfg = JSON.parse(raw);
-    } catch (e) {
-      cfg = null;
-    }
-    paymentConfig = {
-      enabled: !!(cfg && cfg.enabled),
-      holder: cfg && cfg.holder ? String(cfg.holder) : "",
-      alias: cfg && cfg.alias ? String(cfg.alias) : "",
-      cbu: cfg && cfg.cbu ? String(cfg.cbu) : "",
-    };
-  }
-
-  function applyPaymentConfigToDom() {
-    const transferenciaCard = document.getElementById("pago-transferencia-card");
-    if (transferenciaCard) transferenciaCard.classList.toggle("hidden", !paymentConfig.enabled);
-
-    const titular = document.getElementById("saboramaia-bank-titular");
-    const alias = document.getElementById("saboramaia-bank-alias");
-    const cbu = document.getElementById("saboramaia-bank-cbu");
-    if (titular) titular.textContent = paymentConfig.holder || "Saboramaia";
-    if (alias) alias.textContent = paymentConfig.alias || "SABORAMAIA.PASTELERIA";
-    if (cbu) cbu.textContent = paymentConfig.cbu || "0000000000000000000000";
-
-    const selected = document.querySelector('#checkout-form input[name="pago"]:checked')?.value || "";
-    if (!paymentConfig.enabled && selected === "transferencia") {
-      const tr = document.querySelector('#checkout-form input[name="pago"][value="transferencia"]');
-      if (tr) tr.checked = false;
-      const efectivo = document.querySelector('#checkout-form input[name="pago"][value="efectivo"]');
-      if (efectivo) efectivo.checked = true;
-    }
-    updateTransferenciaPanel();
-  }
-
-  // Inicializar config de pagos al inicio (antes de abrir checkout).
-  mergePaymentConfig();
 
   /**
    * @returns {{ status: "empty" } | { status: "unknown", code: string } | { status: "inactive", code: string } | { status: "ok", code: string, percent: number }}
@@ -2728,7 +2682,7 @@
     const box = document.getElementById("field-transferencia");
     if (!box) return;
     const v = document.querySelector('#checkout-form input[name="pago"]:checked')?.value;
-    box.classList.toggle("hidden", !(paymentConfig.enabled && v === "transferencia"));
+    box.classList.toggle("hidden", v !== "transferencia");
   }
 
   function todayIsoLocal() {
@@ -3082,17 +3036,6 @@
       lines.push(`*Dirección:* ${checkout.direccion}`);
     }
     lines.push("*Método de pago elegido:* " + formatPagoLabelWhatsapp(checkout.pago));
-    if (checkout.pago === "transferencia" && paymentConfig.enabled) {
-      lines.push("");
-      lines.push("*DATOS PARA TRANSFERENCIA*");
-      if (paymentConfig.alias) lines.push("Alias: " + paymentConfig.alias);
-      if (paymentConfig.cbu) lines.push("CBU/CVU: " + paymentConfig.cbu);
-      if (paymentConfig.holder) lines.push("Titular: " + paymentConfig.holder);
-      if (checkout.reservaPorPeso) {
-        lines.push("");
-        lines.push("⚠️ Transferencia: realizar una vez confirmado el peso final por WhatsApp.");
-      }
-    }
     lines.push("*Cupón:* " + (checkout.cupon || "(ninguno)"));
     lines.push("");
     lines.push("🚀 Enviado desde Saboramaia");
@@ -3578,32 +3521,23 @@
   });
 
   window.addEventListener("storage", function (e) {
-    if (e.key === LS_ADMIN_CONFIG) {
-      mergeAdminConfig();
-      applyReservationTextsToDom();
-      renderGrids();
-      renderCart();
-      if (isCheckoutModalOpen()) {
-        updateCheckoutEntregaUi();
-        updateCheckoutByWeightUi();
-      }
-      updateCuponFeedback();
-      updateHornoEstadoBanner();
-      return;
+    if (e.key !== LS_ADMIN_CONFIG) return;
+    mergeAdminConfig();
+    applyReservationTextsToDom();
+    renderGrids();
+    renderCart();
+    if (isCheckoutModalOpen()) {
+      updateCheckoutEntregaUi();
+      updateCheckoutByWeightUi();
     }
-    if (e.key === LS_PAYMENT_CONFIG) {
-      mergePaymentConfig();
-      applyPaymentConfigToDom();
-      return;
-    }
+    updateCuponFeedback();
+    updateHornoEstadoBanner();
   });
 
   updateScheduleUI();
   updateHornoEstadoBanner();
   updateFomoBanner();
   updateReservaBlock();
-  mergePaymentConfig();
-  applyPaymentConfigToDom();
   renderGrids();
   updateBadges();
   renderCart();

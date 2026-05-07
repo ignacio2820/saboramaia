@@ -116,13 +116,6 @@
         <h2 class="text-lg font-bold text-saboramaia-ink">Productos y stock</h2>
         <p class="mt-1 text-sm font-medium text-saboramaia-ink/70">Activá o desactivá la disponibilidad inmediata.</p>
         <ul id="product-stock-list" class="mt-4 space-y-3"></ul>
-        <button
-          type="button"
-          id="btn-save-prices"
-          class="touch-target mt-4 w-full rounded-2xl border-2 border-saboramaia-rose bg-white py-3.5 text-base font-bold uppercase tracking-wide text-saboramaia-rosedeep shadow-md active:scale-[0.99]"
-        >
-          Guardar cambios de precios
-        </button>
       </section>
 
       <section class="rounded-2xl border border-saboramaia-rose/25 bg-white/90 p-4 shadow-md shadow-saboramaia-rose/10">
@@ -144,63 +137,6 @@
           <option value="48" selected>48 horas</option>
           <option value="72">72 horas</option>
         </select>
-      </section>
-
-      <section class="rounded-2xl border border-saboramaia-rose/25 bg-white/90 p-4 shadow-md shadow-saboramaia-rose/10">
-        <h2 class="text-lg font-bold text-saboramaia-ink">Configuración de Pagos</h2>
-        <p class="mt-1 text-sm font-medium text-saboramaia-ink/75">
-          Activá la transferencia y completá los datos bancarios que se mostrarán en el checkout.
-        </p>
-
-        <div class="mt-4 space-y-4">
-          <div class="flex items-center justify-between gap-4 rounded-2xl border border-saboramaia-rose/20 bg-white p-4 shadow-sm">
-            <div class="min-w-0">
-              <p class="text-base font-bold text-saboramaia-ink">Pago por Transferencia</p>
-              <p class="mt-0.5 text-sm font-medium text-saboramaia-ink/65">Mostrará opción y datos en la web.</p>
-            </div>
-            <input
-              type="checkbox"
-              role="switch"
-              class="toggle-ios"
-              id="pay-transfer-enabled"
-              aria-label="Activar pago por transferencia"
-            />
-          </div>
-
-          <div class="space-y-3 rounded-2xl border border-saboramaia-rose/20 bg-white p-4 shadow-sm">
-            <div>
-              <label for="pay-holder" class="block text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">Titular</label>
-              <input
-                type="text"
-                id="pay-holder"
-                class="touch-target mt-1 w-full rounded-xl border border-saboramaia-rose/35 bg-white px-4 py-3 text-base font-semibold text-saboramaia-ink outline-none focus:border-saboramaia-rose"
-                placeholder="Nombre del titular"
-                autocomplete="off"
-              />
-            </div>
-            <div>
-              <label for="pay-alias" class="block text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">Alias</label>
-              <input
-                type="text"
-                id="pay-alias"
-                class="touch-target mt-1 w-full rounded-xl border border-saboramaia-rose/35 bg-white px-4 py-3 text-base font-semibold text-saboramaia-ink outline-none focus:border-saboramaia-rose"
-                placeholder="ALIAS.BANCARIO"
-                autocomplete="off"
-              />
-            </div>
-            <div>
-              <label for="pay-cbu" class="block text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">CBU / CVU</label>
-              <input
-                type="text"
-                id="pay-cbu"
-                inputmode="numeric"
-                class="touch-target mt-1 w-full rounded-xl border border-saboramaia-rose/35 bg-white px-4 py-3 text-base font-semibold text-saboramaia-ink outline-none focus:border-saboramaia-rose"
-                placeholder="0000000000000000000000"
-                autocomplete="off"
-              />
-            </div>
-          </div>
-        </div>
       </section>
 
       <button
@@ -230,7 +166,6 @@
 
   const ACCESS_CODE = "Sabor2026";
   const STORAGE_KEY = "saboramaia_config";
-  const PAYMENT_KEY = "admin_payment_config";
   /** Mismo número que index.html (WhatsApp pedidos) */
   const WA_SYNC_NUMBER = "5493446536509";
 
@@ -275,31 +210,6 @@
     return o;
   }
 
-  function defaultPrices() {
-    return {
-      "tarta-coco": 13999,
-      "tarta-toffe": 14999,
-      "torta-criolla": 7999,
-      "torta-pera-manzana": 7999,
-      rogel: 15999,
-      "tartas-frutales": 14999,
-      "torta-cumple-2-rellenos": 19999,
-      "tarta-banana-split": 14999,
-      "torta-cumpleanos": 19999,
-      chocotorta: 19999,
-      "postre-chaja": 14999,
-      brownie: 14999,
-      "chips-saborizados-rellenos": 24999,
-      "pan-flauta-saborizado": 5999,
-      "empanadas-jamon-queso": 6500,
-      "chips-sin-relleno": 21999,
-      pizzetas: 2500,
-      "pizzetas-integrales": 3500,
-      "panes-caseros-chia": 4999,
-      "chips-integrales": 3999,
-    };
-  }
-
   function mergeStock(cfg) {
     const base = defaultStock();
     if (cfg && cfg.stock && typeof cfg.stock === "object") {
@@ -308,51 +218,6 @@
       });
     }
     return base;
-  }
-
-  function mergePrices(cfg) {
-    const base = defaultPrices();
-    if (cfg && cfg.prices && typeof cfg.prices === "object") {
-      Object.keys(base).forEach((id) => {
-        const v = cfg.prices[id];
-        const n = Number(v);
-        if (Number.isFinite(n) && n >= 0) base[id] = Math.round(n);
-      });
-    }
-    return base;
-  }
-
-  function loadPaymentConfig() {
-    try {
-      const raw = localStorage.getItem(PAYMENT_KEY);
-      if (!raw) return null;
-      return JSON.parse(raw);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function fillPaymentForm(cfg) {
-    const enabled = !!(cfg && cfg.enabled);
-    const sw = document.getElementById("pay-transfer-enabled");
-    if (sw) sw.checked = enabled;
-    const holder = document.getElementById("pay-holder");
-    const alias = document.getElementById("pay-alias");
-    const cbu = document.getElementById("pay-cbu");
-    if (holder) holder.value = cfg && cfg.holder ? String(cfg.holder) : "";
-    if (alias) alias.value = cfg && cfg.alias ? String(cfg.alias) : "";
-    if (cbu) cbu.value = cfg && cfg.cbu ? String(cfg.cbu) : "";
-  }
-
-  function collectPaymentFromUi() {
-    return {
-      version: 1,
-      enabled: !!document.getElementById("pay-transfer-enabled")?.checked,
-      holder: String(document.getElementById("pay-holder")?.value || "").trim(),
-      alias: String(document.getElementById("pay-alias")?.value || "").trim(),
-      cbu: String(document.getElementById("pay-cbu")?.value || "").trim(),
-      updatedAt: new Date().toISOString(),
-    };
   }
 
   const PROMO_DEFS = [
@@ -437,31 +302,16 @@
     }).join("");
   }
 
-  function renderProductList(stockMap, pricesMap) {
+  function renderProductList(stockMap) {
     const ul = document.getElementById("product-stock-list");
     ul.innerHTML = PRODUCT_CATALOG.map((p) => {
       const on = stockMap[p.id] !== false;
-      const priceVal =
-        pricesMap && Number.isFinite(Number(pricesMap[p.id])) ? String(pricesMap[p.id]) : "";
       return `
         <li class="flex items-center gap-3 rounded-2xl border border-saboramaia-rose/20 bg-white/95 p-3 shadow-sm">
           <img src="${p.image}" alt="" class="h-14 w-14 shrink-0 rounded-xl object-cover ring-1 ring-saboramaia-rose/15" width="56" height="56" loading="lazy" />
           <div class="min-w-0 flex-1 py-1">
             <p class="font-bold leading-tight text-saboramaia-ink">${escapeHtml(p.name)}</p>
             <p class="mt-0.5 text-[0.7rem] font-medium text-saboramaia-ink/55">${escapeHtml(p.id)}</p>
-          </div>
-          <div class="flex flex-col items-end gap-1.5">
-            <label class="text-[0.65rem] font-semibold uppercase tracking-wide text-saboramaia-ink/50" for="price-${p.id}">Precio</label>
-            <input
-              type="number"
-              inputmode="numeric"
-              min="0"
-              step="1"
-              id="price-${p.id}"
-              class="touch-target w-[8.5rem] max-w-[40vw] rounded-xl border border-saboramaia-rose/35 bg-white px-3 py-2 text-base font-bold text-saboramaia-ink outline-none focus:border-saboramaia-rose"
-              value="${escapeHtml(priceVal)}"
-              aria-label="Precio ${escapeHtml(p.name)}"
-            />
           </div>
           <input type="checkbox" role="switch" class="toggle-ios" id="stock-${p.id}" ${on ? "checked" : ""} aria-label="Stock ${escapeHtml(p.name)}" />
         </li>`;
@@ -477,8 +327,7 @@
   function fillFormFromConfig() {
     const cfg = loadConfig();
     const stock = mergeStock(cfg || {});
-    const prices = mergePrices(cfg || {});
-    renderProductList(stock, prices);
+    renderProductList(stock);
 
     const couponsMap = mergeCoupons(cfg || {});
     renderPromoCoupons(couponsMap);
@@ -493,8 +342,6 @@
       sel.appendChild(opt);
       sel.value = String(mh);
     }
-
-    fillPaymentForm(loadPaymentConfig() || {});
   }
 
   function collectConfigFromUi() {
@@ -502,13 +349,6 @@
     PRODUCT_CATALOG.forEach((p) => {
       const el = document.getElementById("stock-" + p.id);
       stock[p.id] = el ? !!el.checked : true;
-    });
-    const prices = {};
-    PRODUCT_CATALOG.forEach((p) => {
-      const el = document.getElementById("price-" + p.id);
-      const raw = el ? String(el.value || "").trim() : "";
-      const n = Number(raw);
-      if (raw && Number.isFinite(n) && n >= 0) prices[p.id] = Math.round(n);
     });
     const coupons = {};
     PROMO_DEFS.forEach((d) => {
@@ -524,7 +364,6 @@
     return {
       version: 1,
       stock,
-      prices,
       coupons,
       minReservationHours: parseInt(document.getElementById("min-reservation-hours").value, 10) || 48,
       updatedAt: new Date().toISOString(),
@@ -534,19 +373,8 @@
   function saveConfig() {
     const cfg = collectConfigFromUi();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
-    localStorage.setItem(PAYMENT_KEY, JSON.stringify(collectPaymentFromUi()));
     const toast = document.getElementById("toast-save");
     toast.textContent = "✓ Cambios guardados";
-    toast.classList.remove("hidden");
-    setTimeout(() => toast.classList.add("hidden"), 2200);
-  }
-
-  function savePricesOnly() {
-    const prev = loadConfig() || {};
-    const next = { ...prev, prices: collectConfigFromUi().prices, updatedAt: new Date().toISOString() };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    const toast = document.getElementById("toast-save");
-    toast.textContent = "✓ Precios actualizados";
     toast.classList.remove("hidden");
     setTimeout(() => toast.classList.add("hidden"), 2200);
   }
@@ -588,7 +416,6 @@
   });
 
   document.getElementById("btn-save").addEventListener("click", saveConfig);
-  document.getElementById("btn-save-prices").addEventListener("click", savePricesOnly);
   document.getElementById("btn-sync-wa").addEventListener("click", syncWhatsApp);
 })();
   </script>
