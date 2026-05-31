@@ -1119,7 +1119,7 @@
               <span class="pointer-events-none absolute inset-0 rounded-2xl ring-2 ring-transparent transition peer-checked:ring-saboramaia-rosedeep/50" aria-hidden="true"></span>
             </label>
           </div>
-          <div id="checkout-pago-directo" class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <div id="checkout-pago-directo" class="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <label class="checkout-pago-card group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-saboramaia-rose/25 bg-white/75 px-3 py-3.5 transition hover:border-saboramaia-rosedeep/50 sm:flex-col sm:items-stretch sm:px-3 sm:py-4">
               <input type="radio" name="pago" value="efectivo" class="peer sr-only" required />
               <span class="text-lg sm:text-center" aria-hidden="true">💵</span>
@@ -1129,46 +1129,30 @@
               </span>
               <span class="pointer-events-none absolute inset-0 rounded-2xl ring-2 ring-transparent transition peer-checked:ring-saboramaia-rosedeep/50" aria-hidden="true"></span>
             </label>
-            <label class="checkout-pago-card group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-saboramaia-rose/25 bg-white/75 px-3 py-3.5 transition hover:border-saboramaia-rosedeep/50 sm:flex-col sm:items-stretch sm:px-3 sm:py-4">
-              <input type="radio" name="pago" value="mercadopago" class="peer sr-only" />
-              <span class="text-lg sm:text-center" aria-hidden="true">📱</span>
-              <span class="min-w-0 flex-1 sm:text-center">
-                <span class="block text-sm font-semibold text-saboramaia-ink">Mercado Pago</span>
-                <span class="mt-0.5 block text-[0.65rem] font-medium uppercase tracking-wide text-saboramaia-ink/60">QR / link</span>
-              </span>
-              <span class="pointer-events-none absolute inset-0 rounded-2xl ring-2 ring-transparent transition peer-checked:ring-saboramaia-rosedeep/50" aria-hidden="true"></span>
-            </label>
             <label id="pago-transferencia-card" class="checkout-pago-card group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-saboramaia-rose/25 bg-white/75 px-3 py-3.5 transition hover:border-saboramaia-rosedeep/50 sm:flex-col sm:items-stretch sm:px-3 sm:py-4">
               <input type="radio" name="pago" value="transferencia" class="peer sr-only" />
               <span class="text-lg sm:text-center" aria-hidden="true">🏦</span>
               <span class="min-w-0 flex-1 sm:text-center">
-                <span class="block text-sm font-semibold text-saboramaia-ink">Transferencia</span>
-                <span class="mt-0.5 block text-[0.65rem] font-medium uppercase tracking-wide text-saboramaia-ink/60">Bancaria</span>
+                <span class="block text-sm font-semibold text-saboramaia-ink">Transferencia Bancaria</span>
+                <span class="mt-0.5 block text-[0.65rem] font-medium uppercase tracking-wide text-saboramaia-ink/60">Alias / CBU</span>
               </span>
               <span class="pointer-events-none absolute inset-0 rounded-2xl ring-2 ring-transparent transition peer-checked:ring-saboramaia-rosedeep/50" aria-hidden="true"></span>
             </label>
           </div>
           <div
-            id="field-transferencia"
+            id="datos-transferencia"
             class="mt-3 hidden space-y-2.5 rounded-xl border border-saboramaia-rose/30 bg-gradient-to-b from-white/80 to-saboramaia-cream/55 p-3 ring-1 ring-inset ring-saboramaia-rose/10"
             role="region"
             aria-labelledby="transferencia-heading"
           >
             <p id="transferencia-heading" class="text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep/90">Datos para transferencia — Saboramaia</p>
-            <div class="space-y-2">
+            <div id="datos-transferencia-rows" class="space-y-2">
               <div class="flex flex-wrap items-end justify-between gap-2 rounded-lg border border-saboramaia-rose/20 bg-white/40 px-2.5 py-2">
                 <div class="min-w-0 flex-1">
-                  <span class="text-[0.65rem] font-medium uppercase tracking-wide text-saboramaia-ink/50">Banco</span>
-                  <p id="saboramaia-bank-banco" class="text-sm font-semibold text-saboramaia-ink">Banco (completar)</p>
+                  <span class="text-[0.65rem] font-medium uppercase tracking-wide text-saboramaia-ink/50">Titular</span>
+                  <p id="saboramaia-bank-titular" class="text-sm font-semibold text-saboramaia-ink">Saboramaia</p>
                 </div>
-                <button type="button" class="btn-copy-bank-data btn-saboramaia-outline shrink-0 rounded-lg px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-wide" data-copy-target="saboramaia-bank-banco" aria-label="Copiar banco">Copiar</button>
-              </div>
-              <div class="flex flex-wrap items-end justify-between gap-2 rounded-lg border border-saboramaia-rose/20 bg-white/40 px-2.5 py-2">
-                <div class="min-w-0 flex-1">
-                  <span class="text-[0.65rem] font-medium uppercase tracking-wide text-saboramaia-ink/50">CBU</span>
-                  <p id="saboramaia-bank-cbu" class="break-all text-sm font-semibold text-saboramaia-ink">0000000000000000000000</p>
-                </div>
-                <button type="button" class="btn-copy-bank-data btn-saboramaia-outline shrink-0 rounded-lg px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-wide" data-copy-target="saboramaia-bank-cbu" aria-label="Copiar CBU">Copiar</button>
+                <button type="button" class="btn-copy-bank-data btn-saboramaia-outline shrink-0 rounded-lg px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-wide" data-copy-target="saboramaia-bank-titular" aria-label="Copiar titular">Copiar</button>
               </div>
               <div class="flex flex-wrap items-end justify-between gap-2 rounded-lg border border-saboramaia-rose/20 bg-white/40 px-2.5 py-2">
                 <div class="min-w-0 flex-1">
@@ -1179,12 +1163,15 @@
               </div>
               <div class="flex flex-wrap items-end justify-between gap-2 rounded-lg border border-saboramaia-rose/20 bg-white/40 px-2.5 py-2">
                 <div class="min-w-0 flex-1">
-                  <span class="text-[0.65rem] font-medium uppercase tracking-wide text-saboramaia-ink/50">Titular</span>
-                  <p id="saboramaia-bank-titular" class="text-sm font-semibold text-saboramaia-ink">Saboramaia</p>
+                  <span class="text-[0.65rem] font-medium uppercase tracking-wide text-saboramaia-ink/50">CBU / CVU</span>
+                  <p id="saboramaia-bank-cbu" class="break-all text-sm font-semibold text-saboramaia-ink">0000000000000000000000</p>
                 </div>
-                <button type="button" class="btn-copy-bank-data btn-saboramaia-outline shrink-0 rounded-lg px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-wide" data-copy-target="saboramaia-bank-titular" aria-label="Copiar titular">Copiar</button>
+                <button type="button" class="btn-copy-bank-data btn-saboramaia-outline shrink-0 rounded-lg px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-wide" data-copy-target="saboramaia-bank-cbu" aria-label="Copiar CBU">Copiar</button>
               </div>
             </div>
+            <p id="datos-transferencia-fallback" class="hidden rounded-lg border border-saboramaia-rose/20 bg-white/40 px-2.5 py-2 text-sm font-medium leading-relaxed text-saboramaia-ink/75">
+              Los datos de transferencia se coordinarán por WhatsApp.
+            </p>
             <p class="text-[0.65rem] leading-relaxed text-saboramaia-ink/55">Por favor, enviá el comprobante de transferencia por este mismo chat de WhatsApp al finalizar.</p>
           </div>
         </div>
@@ -1936,10 +1923,11 @@
     };
   }
 
-  function applyPaymentConfigToDom() {
-    const transferenciaCard = document.getElementById("pago-transferencia-card");
-    if (transferenciaCard) transferenciaCard.classList.toggle("hidden", !paymentConfig.enabled);
+  function hasTransferData() {
+    return !!(paymentConfig.holder || paymentConfig.alias || paymentConfig.cbu);
+  }
 
+  function applyPaymentConfigToDom() {
     const titular = document.getElementById("saboramaia-bank-titular");
     const alias = document.getElementById("saboramaia-bank-alias");
     const cbu = document.getElementById("saboramaia-bank-cbu");
@@ -1947,13 +1935,12 @@
     if (alias) alias.textContent = paymentConfig.alias || "SABORAMAIA.PASTELERIA";
     if (cbu) cbu.textContent = paymentConfig.cbu || "0000000000000000000000";
 
-    const selected = document.querySelector('#checkout-form input[name="pago"]:checked')?.value || "";
-    if (!paymentConfig.enabled && selected === "transferencia") {
-      const tr = document.querySelector('#checkout-form input[name="pago"][value="transferencia"]');
-      if (tr) tr.checked = false;
-      const efectivo = document.querySelector('#checkout-form input[name="pago"][value="efectivo"]');
-      if (efectivo) efectivo.checked = true;
-    }
+    const rows = document.getElementById("datos-transferencia-rows");
+    const fallback = document.getElementById("datos-transferencia-fallback");
+    const dataOk = hasTransferData();
+    if (rows) rows.classList.toggle("hidden", !dataOk);
+    if (fallback) fallback.classList.toggle("hidden", dataOk);
+
     updateTransferenciaPanel();
   }
 
@@ -2698,6 +2685,8 @@
       }
     }
     closeCart();
+    mergePaymentConfig();
+    applyPaymentConfigToDom();
     document.getElementById("checkout-form").reset();
     const domicilioRadio = document.querySelector('#checkout-form input[name="entrega"][value="domicilio"]');
     if (domicilioRadio) domicilioRadio.checked = true;
@@ -2754,17 +2743,16 @@
 
   function formatPagoLabelWhatsapp(code) {
     if (code === "efectivo") return "Efectivo (en local / delivery)";
-    if (code === "mercadopago") return "Mercado Pago (QR / link)";
     if (code === "transferencia") return "Transferencia bancaria";
     if (code === "pendiente_pesaje") return "Pago tras pesaje (precio final por WhatsApp)";
     return code ? String(code) : "(no indicado)";
   }
 
   function updateTransferenciaPanel() {
-    const box = document.getElementById("field-transferencia");
+    const box = document.getElementById("datos-transferencia");
     if (!box) return;
     const v = document.querySelector('#checkout-form input[name="pago"]:checked')?.value;
-    box.classList.toggle("hidden", !(paymentConfig.enabled && v === "transferencia"));
+    box.classList.toggle("hidden", v !== "transferencia");
   }
 
   function todayIsoLocal() {
@@ -3117,17 +3105,23 @@
     if (checkout.entrega === "domicilio") {
       lines.push(`*Dirección:* ${checkout.direccion}`);
     }
-    lines.push("*Método de pago elegido:* " + formatPagoLabelWhatsapp(checkout.pago));
-    if (checkout.pago === "transferencia" && paymentConfig.enabled) {
-      lines.push("");
-      lines.push("*DATOS PARA TRANSFERENCIA*");
-      if (paymentConfig.alias) lines.push("Alias: " + paymentConfig.alias);
-      if (paymentConfig.cbu) lines.push("CBU/CVU: " + paymentConfig.cbu);
-      if (paymentConfig.holder) lines.push("Titular: " + paymentConfig.holder);
-      if (checkout.reservaPorPeso) {
-        lines.push("");
-        lines.push("⚠️ Transferencia: realizar una vez confirmado el peso final por WhatsApp.");
+    if (checkout.pago === "transferencia") {
+      lines.push("*Método de Pago:* Transferencia Bancaria");
+      if (hasTransferData()) {
+        lines.push("Por favor, realiza el pago a los siguientes datos:");
+        if (paymentConfig.holder) lines.push("- Titular: " + paymentConfig.holder);
+        if (paymentConfig.alias) lines.push("- Alias: " + paymentConfig.alias);
+        if (paymentConfig.cbu) lines.push("- CBU/CVU: " + paymentConfig.cbu);
+        if (checkout.reservaPorPeso) {
+          lines.push("");
+          lines.push("⚠️ Transferencia: realizar una vez confirmado el peso final por WhatsApp.");
+        }
+        lines.push("*(Por favor, envía el comprobante por este medio)*");
+      } else {
+        lines.push("Los datos de transferencia se coordinarán por WhatsApp.");
       }
+    } else {
+      lines.push("*Método de pago elegido:* " + formatPagoLabelWhatsapp(checkout.pago));
     }
     lines.push("*Cupón:* " + (checkout.cupon || "(ninguno)"));
     lines.push("");
@@ -3185,7 +3179,7 @@
     f.reset();
     document.getElementById("field-direccion").classList.add("hidden");
     document.getElementById("direccion").removeAttribute("required");
-    document.getElementById("field-transferencia")?.classList.add("hidden");
+    document.getElementById("datos-transferencia")?.classList.add("hidden");
     updateTransferenciaPanel();
     restoreCustomerFromStorage({ showWelcome: false });
     updateRepeatLastOrderUi();
