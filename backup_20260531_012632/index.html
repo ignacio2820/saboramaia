@@ -1806,41 +1806,6 @@
 
   const LS_ADMIN_CONFIG = "saboramaia_config";
   const LS_PAYMENT_CONFIG = "admin_payment_config";
-  const LS_CUSTOM_PRODUCTS = "saboramaia_custom_products";
-  const DEFAULT_PRODUCT_IMAGE = "assets/default-torta.jpg";
-
-  function loadCustomProducts() {
-    try {
-      const raw = localStorage.getItem(LS_CUSTOM_PRODUCTS);
-      if (!raw) return [];
-      const arr = JSON.parse(raw);
-      return Array.isArray(arr) ? arr : [];
-    } catch (e) {
-      return [];
-    }
-  }
-
-  function syncCustomProducts() {
-    for (let i = PRODUCTS.length - 1; i >= 0; i--) {
-      if (PRODUCTS[i] && PRODUCTS[i].custom) PRODUCTS.splice(i, 1);
-    }
-    loadCustomProducts().forEach((cp) => {
-      if (!cp || cp.id == null) return;
-      const category = cp.category === "Salado" || cp.category === "catering" ? "catering" : "torta";
-      const price = Number(cp.price);
-      PRODUCTS.push({
-        id: String(cp.id),
-        category,
-        name: String(cp.name || "Producto"),
-        desc: String(cp.desc || ""),
-        price: Number.isFinite(price) && price >= 0 ? Math.round(price) : 0,
-        image: cp.image && String(cp.image).trim() ? String(cp.image).trim() : DEFAULT_PRODUCT_IMAGE,
-        hasStock: cp.hasStock !== false,
-        isByWeight: false,
-        custom: true,
-      });
-    });
-  }
   let minReservationHours = 48;
   let paymentConfig = { enabled: false, holder: "", alias: "", cbu: "" };
 
@@ -1856,7 +1821,6 @@
   let promoCouponsRules = defaultPromoCouponsRules();
 
   function mergeAdminConfig() {
-    syncCustomProducts();
     try {
       const raw = localStorage.getItem(LS_ADMIN_CONFIG);
       promoCouponsRules = defaultPromoCouponsRules();
@@ -2409,7 +2373,7 @@
     return `
       <article class="${cardClass}">
         <div class="${imageFrameClass}">
-          <img src="${p.image}" onerror="this.onerror=null;this.src='${DEFAULT_PRODUCT_IMAGE}'" alt="${p.name}" class="${imgClass}" loading="lazy" width="800" height="600" />
+          <img src="${p.image}" alt="${p.name}" class="${imgClass}" loading="lazy" width="800" height="600" />
           <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-transparent to-transparent" aria-hidden="true"></div>
         </div>
         <div class="flex flex-1 flex-col p-5">
@@ -3614,7 +3578,7 @@
   });
 
   window.addEventListener("storage", function (e) {
-    if (e.key === LS_ADMIN_CONFIG || e.key === LS_CUSTOM_PRODUCTS) {
+    if (e.key === LS_ADMIN_CONFIG) {
       mergeAdminConfig();
       applyReservationTextsToDom();
       renderGrids();

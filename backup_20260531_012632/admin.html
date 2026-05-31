@@ -112,24 +112,6 @@
     </header>
 
     <main class="mx-auto max-w-lg space-y-8 px-4 py-6">
-      <button
-        type="button"
-        id="btn-open-add-product"
-        class="touch-target flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-b from-[#ff4da6] to-[#DA0078] py-4 text-base font-extrabold uppercase tracking-wide text-white shadow-lg shadow-saboramaia-rose/35 active:scale-[0.99]"
-      >
-        <span aria-hidden="true" class="text-xl leading-none">+</span>
-        Agregar Nuevo Producto
-      </button>
-
-      <section class="rounded-2xl border border-saboramaia-rose/25 bg-white/90 p-4 shadow-md shadow-saboramaia-rose/10">
-        <h2 class="text-lg font-bold text-saboramaia-ink">Productos personalizados</h2>
-        <p class="mt-1 text-sm font-medium text-saboramaia-ink/70">Productos creados desde el panel. Se publican al instante en la web.</p>
-        <ul id="custom-products-list" class="mt-4 space-y-3"></ul>
-        <p id="custom-products-empty" class="mt-4 hidden rounded-2xl border border-dashed border-saboramaia-rose/30 bg-white/60 px-4 py-6 text-center text-sm font-medium text-saboramaia-ink/55">
-          Todavía no agregaste productos personalizados.
-        </p>
-      </section>
-
       <section>
         <h2 class="text-lg font-bold text-saboramaia-ink">Productos y stock</h2>
         <p class="mt-1 text-sm font-medium text-saboramaia-ink/70">Activá o desactivá la disponibilidad inmediata.</p>
@@ -240,105 +222,6 @@
     </main>
   </div>
 
-  <!-- Modal: Agregar producto -->
-  <div id="add-product-modal" class="fixed inset-0 z-[120] hidden">
-    <div id="add-product-backdrop" class="absolute inset-0 bg-saboramaia-ink/40 backdrop-blur-sm"></div>
-    <div class="absolute inset-x-0 bottom-0 max-h-[92dvh] overflow-y-auto rounded-t-3xl border-t-2 border-saboramaia-rose/30 bg-saboramaia-cream p-5 shadow-2xl sm:inset-x-auto sm:left-1/2 sm:top-1/2 sm:bottom-auto sm:max-h-[90dvh] sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-3xl sm:border-2">
-      <div class="mb-4 flex items-center justify-between">
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">Nuevo producto</p>
-          <h2 class="text-xl font-bold text-saboramaia-ink">Crear producto</h2>
-        </div>
-        <button
-          type="button"
-          id="btn-close-add-product"
-          class="touch-target -mr-1 flex items-center justify-center rounded-full text-2xl font-bold text-saboramaia-ink/60 active:scale-90"
-          aria-label="Cerrar"
-        >
-          ×
-        </button>
-      </div>
-
-      <form id="add-product-form" class="space-y-4" autocomplete="off">
-        <div>
-          <label for="np-name" class="block text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">Nombre del producto</label>
-          <input
-            type="text"
-            id="np-name"
-            required
-            class="touch-target mt-1 w-full rounded-xl border border-saboramaia-rose/35 bg-white px-4 py-3 text-base font-semibold text-saboramaia-ink outline-none focus:border-saboramaia-rose focus:ring-2 focus:ring-saboramaia-rose/20"
-            placeholder="Ej. Torta Selva Negra"
-          />
-        </div>
-
-        <div>
-          <label for="np-desc" class="block text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">Descripción / Ingredientes</label>
-          <textarea
-            id="np-desc"
-            rows="3"
-            class="mt-1 w-full rounded-xl border border-saboramaia-rose/35 bg-white px-4 py-3 text-base font-medium text-saboramaia-ink outline-none focus:border-saboramaia-rose focus:ring-2 focus:ring-saboramaia-rose/20"
-            placeholder="Detalle de ingredientes, tamaño, porciones…"
-          ></textarea>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label for="np-price" class="block text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">Precio</label>
-            <input
-              type="number"
-              id="np-price"
-              inputmode="numeric"
-              min="0"
-              step="1"
-              required
-              class="touch-target mt-1 w-full rounded-xl border border-saboramaia-rose/35 bg-white px-4 py-3 text-base font-bold text-saboramaia-ink outline-none focus:border-saboramaia-rose focus:ring-2 focus:ring-saboramaia-rose/20"
-              placeholder="0"
-            />
-          </div>
-          <div>
-            <label for="np-category" class="block text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">Categoría</label>
-            <select
-              id="np-category"
-              class="touch-target mt-1 w-full rounded-xl border border-saboramaia-rose/35 bg-white px-3 py-3 text-base font-semibold text-saboramaia-ink outline-none focus:border-saboramaia-rose"
-            >
-              <option value="Dulce">Dulce</option>
-              <option value="Salado">Salado</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label for="np-image" class="block text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">Imagen (URL)</label>
-          <input
-            type="text"
-            id="np-image"
-            class="touch-target mt-1 w-full rounded-xl border border-saboramaia-rose/35 bg-white px-4 py-3 text-base font-medium text-saboramaia-ink outline-none focus:border-saboramaia-rose focus:ring-2 focus:ring-saboramaia-rose/20"
-            placeholder="https://… (opcional)"
-          />
-          <p class="mt-1 text-xs font-medium text-saboramaia-ink/55">Si lo dejás vacío se usa una imagen por defecto.</p>
-        </div>
-
-        <p id="np-error" class="hidden rounded-xl bg-red-50 px-3 py-2 text-sm font-semibold text-red-600"></p>
-
-        <div class="flex gap-3 pt-1">
-          <button
-            type="button"
-            id="btn-cancel-add-product"
-            class="touch-target flex-1 rounded-2xl border-2 border-saboramaia-rose/40 bg-white py-3.5 text-base font-bold text-saboramaia-rosedeep active:scale-[0.99]"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            class="touch-target flex-1 rounded-2xl bg-gradient-to-b from-[#ff4da6] to-[#DA0078] py-3.5 text-base font-bold uppercase tracking-wide text-white shadow-lg shadow-saboramaia-rose/30 active:scale-[0.99]"
-          >
-            Guardar
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <div id="toast-save" class="pointer-events-none fixed bottom-24 left-1/2 z-[110] hidden -translate-x-1/2 rounded-full bg-saboramaia-ink px-5 py-3 text-sm font-semibold text-white shadow-xl" role="status"></div>
 
   <script>
@@ -348,8 +231,6 @@
   const ACCESS_CODE = "Sabor2026";
   const STORAGE_KEY = "saboramaia_config";
   const PAYMENT_KEY = "admin_payment_config";
-  const CUSTOM_PRODUCTS_KEY = "saboramaia_custom_products";
-  const DEFAULT_PRODUCT_IMAGE = "assets/default-torta.jpg";
   /** Mismo número que index.html (WhatsApp pedidos) */
   const WA_SYNC_NUMBER = "5493446536509";
 
@@ -614,7 +495,6 @@
     }
 
     fillPaymentForm(loadPaymentConfig() || {});
-    renderCustomProducts();
   }
 
   function collectConfigFromUi() {
@@ -701,152 +581,6 @@
     }
     window.location.href = "index.html";
   }
-
-  /* ===== Productos personalizados (alta/baja dinámica) ===== */
-  function loadCustomProducts() {
-    try {
-      const raw = localStorage.getItem(CUSTOM_PRODUCTS_KEY);
-      if (!raw) return [];
-      const arr = JSON.parse(raw);
-      return Array.isArray(arr) ? arr : [];
-    } catch (e) {
-      return [];
-    }
-  }
-
-  function saveCustomProducts(list) {
-    localStorage.setItem(CUSTOM_PRODUCTS_KEY, JSON.stringify(list));
-  }
-
-  function showToast(msg) {
-    const toast = document.getElementById("toast-save");
-    toast.textContent = msg;
-    toast.classList.remove("hidden");
-    setTimeout(() => toast.classList.add("hidden"), 2200);
-  }
-
-  function renderCustomProducts() {
-    const ul = document.getElementById("custom-products-list");
-    const empty = document.getElementById("custom-products-empty");
-    if (!ul) return;
-    const list = loadCustomProducts();
-    if (!list.length) {
-      ul.innerHTML = "";
-      if (empty) empty.classList.remove("hidden");
-      return;
-    }
-    if (empty) empty.classList.add("hidden");
-    ul.innerHTML = list
-      .map((p) => {
-        const img = p.image && String(p.image).trim() ? String(p.image).trim() : DEFAULT_PRODUCT_IMAGE;
-        const priceTxt = Number.isFinite(Number(p.price)) ? "$" + Number(p.price).toLocaleString("es-AR") : "—";
-        return `
-        <li class="flex items-center gap-3 rounded-2xl border border-saboramaia-rose/20 bg-white/95 p-3 shadow-sm">
-          <img src="${escapeHtml(img)}" onerror="this.src='${DEFAULT_PRODUCT_IMAGE}'" alt="" class="h-14 w-14 shrink-0 rounded-xl object-cover ring-1 ring-saboramaia-rose/15" width="56" height="56" loading="lazy" />
-          <div class="min-w-0 flex-1 py-1">
-            <p class="truncate font-bold leading-tight text-saboramaia-ink">${escapeHtml(p.name || "Producto")}</p>
-            <p class="mt-0.5 text-[0.72rem] font-medium text-saboramaia-ink/55">
-              <span class="rounded-full bg-saboramaia-roselight px-2 py-0.5 font-semibold text-saboramaia-rosedeep">${escapeHtml(p.category || "Dulce")}</span>
-              <span class="ml-1 font-semibold text-saboramaia-ink/70">${escapeHtml(priceTxt)}</span>
-            </p>
-          </div>
-          <button
-            type="button"
-            data-delete-product="${escapeHtml(String(p.id))}"
-            class="touch-target flex shrink-0 items-center justify-center rounded-xl border border-red-200 bg-red-50 px-3 text-red-600 active:scale-95"
-            aria-label="Eliminar ${escapeHtml(p.name || "producto")}"
-            title="Eliminar"
-          >
-            <span aria-hidden="true">🗑️</span>
-          </button>
-        </li>`;
-      })
-      .join("");
-
-    ul.querySelectorAll("[data-delete-product]").forEach((btn) => {
-      btn.addEventListener("click", () => eliminarProducto(btn.getAttribute("data-delete-product")));
-    });
-  }
-
-  function openAddProductModal() {
-    const modal = document.getElementById("add-product-modal");
-    modal.classList.remove("hidden");
-    document.getElementById("np-error").classList.add("hidden");
-    setTimeout(() => document.getElementById("np-name")?.focus(), 50);
-  }
-
-  function closeAddProductModal() {
-    document.getElementById("add-product-modal").classList.add("hidden");
-  }
-
-  function resetAddProductForm() {
-    const f = document.getElementById("add-product-form");
-    if (f) f.reset();
-    document.getElementById("np-error").classList.add("hidden");
-  }
-
-  function agregarProducto() {
-    const name = String(document.getElementById("np-name").value || "").trim();
-    const desc = String(document.getElementById("np-desc").value || "").trim();
-    const priceRaw = String(document.getElementById("np-price").value || "").trim();
-    const category = document.getElementById("np-category").value === "Salado" ? "Salado" : "Dulce";
-    const imageRaw = String(document.getElementById("np-image").value || "").trim();
-    const err = document.getElementById("np-error");
-
-    const price = Number(priceRaw);
-    if (!name) {
-      err.textContent = "El nombre es obligatorio.";
-      err.classList.remove("hidden");
-      return;
-    }
-    if (!priceRaw || !Number.isFinite(price) || price < 0) {
-      err.textContent = "Ingresá un precio válido.";
-      err.classList.remove("hidden");
-      return;
-    }
-
-    const nuevo = {
-      id: Date.now(),
-      name,
-      desc,
-      price: Math.round(price),
-      category,
-      image: imageRaw || DEFAULT_PRODUCT_IMAGE,
-      hasStock: true,
-    };
-
-    const list = loadCustomProducts();
-    list.push(nuevo);
-    saveCustomProducts(list);
-
-    resetAddProductForm();
-    closeAddProductModal();
-    renderCustomProducts();
-    showToast("✓ Producto agregado");
-  }
-
-  function eliminarProducto(id) {
-    const list = loadCustomProducts();
-    const target = list.find((p) => String(p.id) === String(id));
-    const nombre = target ? target.name : "este producto";
-    if (!window.confirm("¿Estás seguro de que quieres eliminar " + nombre + "?")) return;
-    const next = list.filter((p) => String(p.id) !== String(id));
-    saveCustomProducts(next);
-    renderCustomProducts();
-    showToast("✓ Producto eliminado");
-  }
-
-  document.getElementById("btn-open-add-product").addEventListener("click", openAddProductModal);
-  document.getElementById("btn-close-add-product").addEventListener("click", closeAddProductModal);
-  document.getElementById("btn-cancel-add-product").addEventListener("click", () => {
-    resetAddProductForm();
-    closeAddProductModal();
-  });
-  document.getElementById("add-product-backdrop").addEventListener("click", closeAddProductModal);
-  document.getElementById("add-product-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    agregarProducto();
-  });
 
   document.getElementById("gate-submit").addEventListener("click", tryGate);
   document.getElementById("gate-password").addEventListener("keydown", (e) => {
