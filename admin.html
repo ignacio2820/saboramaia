@@ -308,14 +308,14 @@
         </div>
 
         <div>
-          <label for="np-image" class="block text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">Imagen (URL)</label>
+          <label for="np-image" class="block text-xs font-semibold uppercase tracking-wider text-saboramaia-rosedeep">Imagen del producto</label>
           <input
-            type="text"
+            type="file"
             id="np-image"
-            class="touch-target mt-1 w-full rounded-xl border border-saboramaia-rose/35 bg-white px-4 py-3 text-base font-medium text-saboramaia-ink outline-none focus:border-saboramaia-rose focus:ring-2 focus:ring-saboramaia-rose/20"
-            placeholder="https://… (opcional)"
+            accept="image/png, image/jpeg, image/jpg"
+            class="mt-1 w-full cursor-pointer rounded-xl border border-saboramaia-rose/35 bg-white text-sm font-medium text-saboramaia-ink/80 outline-none file:mr-3 file:cursor-pointer file:border-0 file:bg-saboramaia-roselight file:px-4 file:py-3 file:text-sm file:font-bold file:uppercase file:tracking-wide file:text-saboramaia-rosedeep hover:file:bg-saboramaia-rose/15 focus:border-saboramaia-rose focus:ring-2 focus:ring-saboramaia-rose/20"
           />
-          <p class="mt-1 text-xs font-medium text-saboramaia-ink/55">Si lo dejás vacío se usa una imagen por defecto.</p>
+          <p class="mt-1 text-xs font-medium text-saboramaia-ink/55">Subí una foto (.jpg o .png). Si no elegís ninguna, se usa una imagen por defecto.</p>
         </div>
 
         <p id="np-error" class="hidden rounded-xl bg-red-50 px-3 py-2 text-sm font-semibold text-red-600"></p>
@@ -351,7 +351,7 @@
   const CUSTOM_PRODUCTS_KEY = "saboramaia_custom_products";
   const DEFAULT_PRODUCT_IMAGE = "assets/default-torta.jpg";
   /** Mismo número que index.html (WhatsApp pedidos) */
-  const WA_SYNC_NUMBER = "5493446536509";
+  const WA_SYNC_NUMBER = "5493446211474";
 
   const PRODUCT_CATALOG = [
     { id: "tarta-coco", name: "Tarta de Coco", image: "assets/Tarta.coco.jpg" },
@@ -785,12 +785,76 @@
     document.getElementById("np-error").classList.add("hidden");
   }
 
+  function comprimirImagen(file, maxWidth, maxHeight, quality) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = function () {
+        const img = new Image();
+        img.onload = function () {
+          let { width, height } = img;
+          if (width > maxWidth || height > maxHeight) {
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            width = Math.round(width * ratio);
+            height = Math.round(height * ratio);
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            reject(new Error("canvas-unsupported"));
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          try {
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          } catch (e) {
+            reject(e);
+          }
+        };
+        img.onerror = () => reject(new Error("image-decode-failed"));
+        img.src = String(reader.result || "");
+      };
+      reader.onerror = () => reject(new Error("file-read-failed"));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function persistProducto(name, desc, price, category, image) {
+    const nuevo = {
+      id: Date.now(),
+      name,
+      desc,
+      price: Math.round(price),
+      category,
+      image: image || DEFAULT_PRODUCT_IMAGE,
+      hasStock: true,
+    };
+
+    const list = loadCustomProducts();
+    list.push(nuevo);
+    try {
+      saveCustomProducts(list);
+    } catch (e) {
+      const err = document.getElementById("np-error");
+      err.textContent = "No se pudo guardar: la imagen es demasiado pesada. Probá con una más liviana.";
+      err.classList.remove("hidden");
+      return;
+    }
+
+    resetAddProductForm();
+    closeAddProductModal();
+    renderCustomProducts();
+    showToast("✓ Producto agregado");
+  }
+
   function agregarProducto() {
     const name = String(document.getElementById("np-name").value || "").trim();
     const desc = String(document.getElementById("np-desc").value || "").trim();
     const priceRaw = String(document.getElementById("np-price").value || "").trim();
     const category = document.getElementById("np-category").value === "Salado" ? "Salado" : "Dulce";
-    const imageRaw = String(document.getElementById("np-image").value || "").trim();
+    const fileInput = document.getElementById("np-image");
+    const file = fileInput && fileInput.files ? fileInput.files[0] : null;
     const err = document.getElementById("np-error");
 
     const price = Number(priceRaw);
@@ -805,24 +869,25 @@
       return;
     }
 
-    const nuevo = {
-      id: Date.now(),
-      name,
-      desc,
-      price: Math.round(price),
-      category,
-      image: imageRaw || DEFAULT_PRODUCT_IMAGE,
-      hasStock: true,
-    };
+    if (file) {
+      const okType = /^image\/(png|jpe?g)$/i.test(file.type);
+      if (!okType) {
+        err.textContent = "Formato no válido. Subí una imagen .jpg o .png.";
+        err.classList.remove("hidden");
+        return;
+      }
+      comprimirImagen(file, 800, 800, 0.75)
+        .then((base64) => {
+          persistProducto(name, desc, price, category, base64);
+        })
+        .catch(() => {
+          err.textContent = "No se pudo procesar la imagen. Intentá con otra foto.";
+          err.classList.remove("hidden");
+        });
+      return;
+    }
 
-    const list = loadCustomProducts();
-    list.push(nuevo);
-    saveCustomProducts(list);
-
-    resetAddProductForm();
-    closeAddProductModal();
-    renderCustomProducts();
-    showToast("✓ Producto agregado");
+    persistProducto(name, desc, price, category, DEFAULT_PRODUCT_IMAGE);
   }
 
   function eliminarProducto(id) {
